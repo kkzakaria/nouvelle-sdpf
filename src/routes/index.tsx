@@ -122,11 +122,20 @@ function Home() {
 
         <div className="section-head">
           <span className="sh-title">Produits vedettes</span>
+          <Link to="/catalogue" className="sh-link">
+            Tout voir
+          </Link>
         </div>
         <div className="pgrid">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
+        </div>
+        <div className="see-all">
+          <Link to="/catalogue" className="btn btn-primary">
+            Voir tous les produits
+            <Icon name="arrow-r" size={18} stroke={2.4} />
+          </Link>
         </div>
       </div>
     </div>

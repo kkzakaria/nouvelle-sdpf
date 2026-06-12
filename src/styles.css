@@ -375,6 +375,13 @@ body {
   gap: 12px;
 }
 
+/* Bouton « Voir tous les produits » sous les vedettes */
+.see-all {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
 /* ── Product card ──────────────────────────────────────────────── */
 .pcard {
   cursor: pointer;

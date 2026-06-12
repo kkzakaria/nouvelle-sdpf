@@ -76,7 +76,7 @@
       "descShort": "Panneaux lambris PVC imitation bois pour habillage mural intérieur.",
       "descLong": "Ces panneaux en PVC à effet bois (chêne clair, wengé, hêtre, rouge) permettent un habillage rapide et durable des murs et plafonds intérieurs. Légers, faciles à poser et résistants à l'humidité, ils conviennent aux pièces à vivre, bureaux et commerces.",
       "image": "ChatGPT Image 12 juin 2026, 16_53_46.png",
-      "featured": false
+      "featured": true
     },
     {
       "id": "tole-ondulee-coloree",
@@ -116,7 +116,7 @@
       "descShort": "Tuyau multicouche PEX-AL-PEX pour plomberie eau chaude/froide et chauffage.",
       "descLong": "Le tuyau multicouche IFAN Laser (PEX-AL-PEX) combine la souplesse du PEX et la rigidité de l'aluminium pour des installations de plomberie sanitaire, eau chaude et chauffage au sol. Sa structure triaxiale résiste aux hautes températures et aux chocs, garantissant une installation fiable et durable.",
       "image": "ChatGPT Image 12 juin 2026, 17_09_50.png",
-      "featured": false
+      "featured": true
     },
     {
       "id": "tuyau-pvc-industriel-jaune",
@@ -156,7 +156,7 @@
       "descShort": "Ciment-colle SDPF pour carrelage intérieur et extérieur.",
       "descLong": "Le Ciment Colle SDPF est un produit de la gamme propre de la société, adapté à la pose de carreaux céramiques et de grès sur mortier sec ou béton, en intérieur et extérieur. Sa formulation assure une excellente prise et une résistance à long terme aux sollicitations mécaniques et à l'humidité.",
       "image": "ChatGPT Image 12 juin 2026, 16_44_13.png",
-      "featured": false
+      "featured": true
     },
     {
       "id": "leclassic-ciment-colle",
@@ -256,8 +256,10 @@
       "descShort": "Brouette de chantier à bac plastique coloré pour transport de matériaux.",
       "descLong": "Ces brouettes de chantier à bac en polyéthylène haute densité (disponibles en jaune, bleu, orange et vert) offrent légèreté et résistance pour le transport de mortier, gravats et matériaux de construction sur chantier. Leur châssis métallique robuste et leur roue gonflable assurent stabilité et maniabilité.",
       "image": "ChatGPT Image 12 juin 2026, 16_37_24.png",
-      "extraImages": ["ChatGPT Image 12 juin 2026, 16_38_51.png"],
-      "featured": false
+      "extraImages": [
+        "ChatGPT Image 12 juin 2026, 16_38_51.png"
+      ],
+      "featured": true
     },
     {
       "id": "clou-beton-concrete-nail",
