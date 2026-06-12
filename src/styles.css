@@ -527,3 +527,22 @@ textarea.field { resize: none; }
   .topnav-links a { color: var(--ink); text-decoration: none; font-family: var(--title-ff); font-weight: 600; font-size: 14px; }
   .topnav-actions { display: flex; gap: 10px; }
 }
+
+/* ── Hero ──────────────────────────────────────────────────────── */
+.hero { background: var(--logo-navy); color: #fff; padding: 48px 18px 30px; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px; }
+.hero-kicker { color: rgba(255,255,255,.66); }
+.hero-title { font-family: var(--title-ff); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -.01em; margin: 10px 0 12px; }
+.hero-sub { color: rgba(255,255,255,.82); font-size: 15px; line-height: 1.45; max-width: 560px; }
+.hero-cta { display: flex; gap: 10px; margin-top: 22px; }
+
+/* ── Perks ─────────────────────────────────────────────────────── */
+.perks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0 6px; }
+.perk { background: var(--surface); border: var(--card-border); border-radius: var(--radius); padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--accent); }
+.perk b { color: var(--ink); font-family: var(--title-ff); font-size: 14px; }
+
+@media (min-width: 1024px) {
+  .hero { border-radius: 0; padding: 64px 24px 40px; }
+  .hero-title { font-size: 46px; }
+  .cat-grid { grid-template-columns: repeat(4, 1fr); }
+  .pgrid { grid-template-columns: repeat(4, 1fr); }
+}
