@@ -30,6 +30,7 @@
 ### Task 1 : Provisionner D1 et R2, supprimer les démos qui dépendent de better-sqlite3
 
 **Files:**
+
 - Delete: `src/routes/demo/drizzle.tsx`, `src/routes/demo/better-auth.tsx`, `src/routes/demo/form.address.tsx`, `src/routes/demo/form.simple.tsx`
 - Delete: `src/hooks/demo.form.ts`, `src/hooks/demo.form-context.ts`, `src/components/demo.FormComponents.tsx`
 
@@ -68,6 +69,7 @@ git commit -m "chore: provision D1/R2 and remove starter demos"
 ### Task 2 : Configurer wrangler.jsonc avec les bindings D1 et R2
 
 **Files:**
+
 - Modify: `wrangler.jsonc`
 
 - [ ] **Step 1 : Réécrire `wrangler.jsonc`**
@@ -86,15 +88,15 @@ Remplacer tout le fichier par (mettre le vrai `database_id` de la Task 1) :
       "binding": "DB",
       "database_name": "nsdpf-db",
       "database_id": "<DATABASE_ID_DE_LA_TASK_1>",
-      "migrations_dir": "migrations"
-    }
+      "migrations_dir": "migrations",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "IMAGES",
-      "bucket_name": "nsdpf-images"
-    }
-  ]
+      "bucket_name": "nsdpf-images",
+    },
+  ],
 }
 ```
 
@@ -120,6 +122,7 @@ git commit -m "feat: add D1 and R2 bindings to wrangler config"
 ### Task 3 : Définir le schéma drizzle (auth + catalogue)
 
 **Files:**
+
 - Rewrite: `src/db/schema.ts`
 
 - [ ] **Step 1 : Réécrire `src/db/schema.ts`**
@@ -177,8 +180,12 @@ export const account = sqliteTable(
     accessToken: text('access_token'),
     refreshToken: text('refresh_token'),
     idToken: text('id_token'),
-    accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp_ms' }),
-    refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp_ms' }),
+    accessTokenExpiresAt: integer('access_token_expires_at', {
+      mode: 'timestamp_ms',
+    }),
+    refreshTokenExpiresAt: integer('refresh_token_expires_at', {
+      mode: 'timestamp_ms',
+    }),
     scope: text('scope'),
     password: text('password'),
     createdAt: integer('created_at', { mode: 'timestamp_ms' })
@@ -275,6 +282,7 @@ git commit -m "feat: define auth and catalogue drizzle schema"
 ### Task 4 : Brancher drizzle sur D1
 
 **Files:**
+
 - Rewrite: `src/db/index.ts`
 
 - [ ] **Step 1 : Réécrire `src/db/index.ts`**
@@ -305,6 +313,7 @@ git commit -m "feat: wire drizzle to D1 binding"
 ### Task 5 : Configurer drizzle-kit pour générer les migrations
 
 **Files:**
+
 - Modify: `drizzle.config.ts`
 
 - [ ] **Step 1 : Réécrire `drizzle.config.ts`**
@@ -346,6 +355,7 @@ git commit -m "feat: generate initial D1 migration"
 ### Task 6 : Brancher better-auth sur D1 via drizzleAdapter
 
 **Files:**
+
 - Rewrite: `src/lib/auth.ts`
 
 - [ ] **Step 1 : Réécrire `src/lib/auth.ts`**
@@ -423,6 +433,7 @@ git commit -m "feat: connect better-auth to D1 via drizzle adapter"
 ### Task 7 : Test de fumée du schéma + démarrage du dev server
 
 **Files:**
+
 - Create: `src/db/schema.test.ts`
 
 - [ ] **Step 1 : Écrire le test de fumée**
@@ -480,6 +491,7 @@ git commit -m "test: add schema smoke test"
 ### Task 8 : Script de création du compte admin + vérification de connexion
 
 **Files:**
+
 - Create: `scripts/create-admin.ts`
 
 - [ ] **Step 1 : Écrire le script de création d'admin**
@@ -500,14 +512,20 @@ async function main() {
   const res = await fetch(`${BASE}/api/auth/sign-up/email`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'Admin NSDPF', email: EMAIL, password: PASSWORD }),
+    body: JSON.stringify({
+      name: 'Admin NSDPF',
+      email: EMAIL,
+      password: PASSWORD,
+    }),
   })
   const body = await res.text()
   if (!res.ok) {
     console.error(`Échec (${res.status}): ${body}`)
     process.exit(1)
   }
-  console.log(`Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`)
+  console.log(
+    `Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`,
+  )
   console.log('⚠️  Changez ce mot de passe après la première connexion.')
 }
 

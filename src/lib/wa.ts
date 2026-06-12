@@ -5,7 +5,10 @@ export function buildWaUrl(number: string, message: string): string {
   return `https://wa.me/${n}?text=${encodeURIComponent(message)}`
 }
 
-export function buildDevisMessage(lines: Array<DevisLine>, extra?: { name?: string; phone?: string; note?: string }): string {
+export function buildDevisMessage(
+  lines: Array<DevisLine>,
+  extra?: { name?: string; phone?: string; note?: string },
+): string {
   let m = 'Bonjour NSDPF, voici ma demande de devis :\n\n'
   for (const l of lines) m += `• ${l.name} — ${l.qty} × (${l.format})\n`
   if (extra?.name) m += `\nNom : ${extra.name}`

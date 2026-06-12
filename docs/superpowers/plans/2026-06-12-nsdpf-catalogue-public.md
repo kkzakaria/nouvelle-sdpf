@@ -4,7 +4,7 @@
 
 **Goal:** Remplacer le template TanStack par le site NSDPF : accueil, catalogue (filtre + recherche), fiche produit, devis (localStorage + WhatsApp), contact — lisant le catalogue depuis D1, images servies depuis R2, avec seed des 4 catégories, 15 produits et upload/mapping des 38 photos.
 
-**Architecture :** Pages SSR ; les *loaders* de route appellent des *server functions* (`createServerFn`) qui lisent D1 via drizzle. Les images sont servies par une route Worker `/img/$key` depuis R2 (Cache API + en-têtes immutables). Le panier devis est un store React + localStorage côté client ; l'envoi génère une URL `wa.me`. Le design (thème industriel) est porté depuis le mockup `/tmp/nsdpf-mockup/` : tokens CSS en variables, classes composants réutilisables, layout responsive (bottom-nav mobile / top-nav desktop) via Tailwind v4.
+**Architecture :** Pages SSR ; les _loaders_ de route appellent des _server functions_ (`createServerFn`) qui lisent D1 via drizzle. Les images sont servies par une route Worker `/img/$key` depuis R2 (Cache API + en-têtes immutables). Le panier devis est un store React + localStorage côté client ; l'envoi génère une URL `wa.me`. Le design (thème industriel) est porté depuis le mockup `/tmp/nsdpf-mockup/` : tokens CSS en variables, classes composants réutilisables, layout responsive (bottom-nav mobile / top-nav desktop) via Tailwind v4.
 
 **Tech Stack :** TanStack Start/Router, React 19, drizzle-orm/d1, Cloudflare R2, Tailwind v4, lucide-react, Vitest.
 
@@ -60,6 +60,7 @@ Les assets du logo : `/tmp/nsdpf-mockup/assets/logo-sdpf.jpeg`.
 ### Task 1 : Supprimer les vestiges du starter + copier le logo
 
 **Files:**
+
 - Delete: `src/routes/about.tsx`, `src/components/Header.tsx`, `src/components/Footer.tsx`, `src/components/ThemeToggle.tsx`, `src/integrations/better-auth/header-user.tsx`
 - Create: `public/logo-sdpf.jpeg`
 
@@ -83,7 +84,12 @@ rm -f src/routes/about.tsx src/components/Header.tsx src/components/Footer.tsx s
 - [ ] **Step 4 : Réécrire temporairement `src/routes/__root.tsx`** en shell minimal pour garder le build vert jusqu'à la Task 9 :
 
 ```tsx
-import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import appCss from '#/styles.css?url'
 
 export const Route = createRootRoute({
@@ -132,6 +138,7 @@ git commit -m "chore: remove starter UI, add NSDPF logo asset"
 ### Task 2 : Porter le design (tokens + classes) dans `src/styles.css`
 
 **Files:**
+
 - Rewrite: `src/styles.css`
 
 **Source :** `/tmp/nsdpf-mockup/styles.css` (thème **industriel uniquement** — ignorer `[data-theme="atelier"|"minimal"]`, `#stage`, `#scaler`, et tout ce qui concerne le cadre device).
@@ -165,6 +172,7 @@ git commit -m "feat: port NSDPF industrial theme tokens and component classes"
 ### Task 3 : Couche d'accès aux données (server functions D1)
 
 **Files:**
+
 - Create: `src/lib/catalog.ts`
 
 - [ ] **Step 1 : Écrire `src/lib/catalog.ts`**
@@ -176,40 +184,67 @@ import { db } from '#/db/index'
 import { categories, products, productImages, settings } from '#/db/schema'
 
 export type CategoryDTO = typeof categories.$inferSelect
-export type ProductDTO = typeof products.$inferSelect & { images: Array<{ key: string; alt: string }> }
+export type ProductDTO = typeof products.$inferSelect & {
+  images: Array<{ key: string; alt: string }>
+}
 
 /** Toutes les catégories, triées. */
-export const getCategories = createServerFn({ method: 'GET' }).handler(async () => {
-  return db.select().from(categories).orderBy(asc(categories.sortOrder))
-})
+export const getCategories = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    return db.select().from(categories).orderBy(asc(categories.sortOrder))
+  },
+)
 
 /** Tous les produits + leur première image (pour les grilles). */
-export const getProducts = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(products).orderBy(asc(products.sortOrder))
-  const imgs = await db.select().from(productImages).orderBy(asc(productImages.sortOrder))
-  return rows.map((p) => ({
-    ...p,
-    images: imgs
-      .filter((i) => i.productId === p.id)
-      .map((i) => ({ key: i.r2Key, alt: i.alt })),
-  }))
-})
+export const getProducts = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db
+      .select()
+      .from(products)
+      .orderBy(asc(products.sortOrder))
+    const imgs = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sortOrder))
+    return rows.map((p) => ({
+      ...p,
+      images: imgs
+        .filter((i) => i.productId === p.id)
+        .map((i) => ({ key: i.r2Key, alt: i.alt })),
+    }))
+  },
+)
 
 /** Produits mis en avant. */
-export const getFeatured = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(products).where(eq(products.featured, true)).orderBy(asc(products.sortOrder))
-  const imgs = await db.select().from(productImages).orderBy(asc(productImages.sortOrder))
-  return rows.map((p) => ({
-    ...p,
-    images: imgs.filter((i) => i.productId === p.id).map((i) => ({ key: i.r2Key, alt: i.alt })),
-  }))
-})
+export const getFeatured = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db
+      .select()
+      .from(products)
+      .where(eq(products.featured, true))
+      .orderBy(asc(products.sortOrder))
+    const imgs = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sortOrder))
+    return rows.map((p) => ({
+      ...p,
+      images: imgs
+        .filter((i) => i.productId === p.id)
+        .map((i) => ({ key: i.r2Key, alt: i.alt })),
+    }))
+  },
+)
 
 /** Un produit par slug, avec toutes ses images. Renvoie null si absent. */
 export const getProductBySlug = createServerFn({ method: 'GET' })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
-    const [p] = await db.select().from(products).where(eq(products.slug, slug)).limit(1)
+    const [p] = await db
+      .select()
+      .from(products)
+      .where(eq(products.slug, slug))
+      .limit(1)
     if (!p) return null
     const imgs = await db
       .select()
@@ -220,10 +255,15 @@ export const getProductBySlug = createServerFn({ method: 'GET' })
   })
 
 /** Paramètres du site sous forme d'objet clé→valeur. */
-export const getSettings = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(settings)
-  return Object.fromEntries(rows.map((r) => [r.key, r.value])) as Record<string, string>
-})
+export const getSettings = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db.select().from(settings)
+    return Object.fromEntries(rows.map((r) => [r.key, r.value])) as Record<
+      string,
+      string
+    >
+  },
+)
 ```
 
 - [ ] **Step 2 : Vérifier les types**
@@ -243,6 +283,7 @@ git commit -m "feat: add D1 catalog read server functions"
 ### Task 4 : Route de service d'images R2 `/img/$`
 
 **Files:**
+
 - Create: `src/routes/img.$.tsx`
 - Create: `src/lib/img.ts`
 
@@ -300,6 +341,7 @@ git commit -m "feat: serve product images from R2 via /img route"
 ### Task 5 : Migration de seed (catégories, produits, settings)
 
 **Files:**
+
 - Create: `migrations/0001_seed_catalog.sql` (généré manuellement, pas par drizzle-kit)
 - Create: `scripts/build-seed.ts` (génère le SQL depuis `/tmp/nsdpf-mockup/data.js` pour éviter les fautes de recopie)
 
@@ -345,11 +387,15 @@ const settings: Array<[string, string]> = [
   ['contact_address', "Abidjan, Côte d'Ivoire"],
 ]
 settings.forEach(([k, v]) => {
-  lines.push(`INSERT OR IGNORE INTO settings (key, value) VALUES ('${k}', '${esc(v)}');`)
+  lines.push(
+    `INSERT OR IGNORE INTO settings (key, value) VALUES ('${k}', '${esc(v)}');`,
+  )
 })
 
 writeFileSync('migrations/0001_seed_catalog.sql', lines.join('\n') + '\n')
-console.log(`Écrit migrations/0001_seed_catalog.sql (${CATS.length} catégories, ${P.length} produits, ${settings.length} settings)`)
+console.log(
+  `Écrit migrations/0001_seed_catalog.sql (${CATS.length} catégories, ${P.length} produits, ${settings.length} settings)`,
+)
 ```
 
 - [ ] **Step 2 : Générer le SQL**
@@ -384,6 +430,7 @@ git commit -m "feat: seed categories, products and settings"
 ### Task 6 : Upload + mapping des 38 images vers R2
 
 **Files:**
+
 - Create: `scripts/seed-images.ts`
 - Create: `scripts/image-map.json` (le mapping image→produit, établi par revue visuelle)
 
@@ -400,12 +447,17 @@ ls /tmp/whatsapp-images | head
 - [ ] **Step 2 : Établir le mapping (revue visuelle)**
 
 Examiner les 38 images (les ouvrir une par une) et écrire `scripts/image-map.json` de la forme :
+
 ```json
 {
   "platre-construction": ["WhatsApp Image 2026-06-11 at 18.49.41.jpeg"],
-  "plaque-ba13": ["WhatsApp Image 2026-06-11 at 18.49.42.jpeg", "WhatsApp Image 2026-06-11 at 18.49.42 (1).jpeg"]
+  "plaque-ba13": [
+    "WhatsApp Image 2026-06-11 at 18.49.42.jpeg",
+    "WhatsApp Image 2026-06-11 at 18.49.42 (1).jpeg"
+  ]
 }
 ```
+
 Règles : clés = ids produits (parmi les 15) ; valeurs = noms de fichiers présents dans `/tmp/whatsapp-images/`. Faire au mieux ; il vaut mieux ne pas mapper une image incertaine que de mal l'associer. Mettre les images non attribuées dans une clé spéciale `"_unassigned"` (elles seront uploadées mais non liées, disponibles pour le Plan 3).
 
 - [ ] **Step 3 : Écrire `scripts/seed-images.ts`**
@@ -424,13 +476,32 @@ import { execFileSync } from 'node:child_process'
 const REMOTE = process.env.SEED_REMOTE === '1'
 const scope = REMOTE ? '--remote' : '--local'
 const SRC = '/tmp/whatsapp-images'
-const map: Record<string, Array<string>> = JSON.parse(readFileSync('scripts/image-map.json', 'utf8'))
+const map: Record<string, Array<string>> = JSON.parse(
+  readFileSync('scripts/image-map.json', 'utf8'),
+)
 
 function r2Put(key: string, file: string) {
-  execFileSync('bunx', ['wrangler', 'r2', 'object', 'put', `nsdpf-images/${key}`, '--file', `${SRC}/${file}`, scope], { stdio: 'inherit' })
+  execFileSync(
+    'bunx',
+    [
+      'wrangler',
+      'r2',
+      'object',
+      'put',
+      `nsdpf-images/${key}`,
+      '--file',
+      `${SRC}/${file}`,
+      scope,
+    ],
+    { stdio: 'inherit' },
+  )
 }
 function d1(sql: string) {
-  execFileSync('bunx', ['wrangler', 'd1', 'execute', 'nsdpf-db', scope, '--command', sql], { stdio: 'inherit' })
+  execFileSync(
+    'bunx',
+    ['wrangler', 'd1', 'execute', 'nsdpf-db', scope, '--command', sql],
+    { stdio: 'inherit' },
+  )
 }
 const uid = (p: string, n: number) => `${p}-${n}`
 
@@ -445,7 +516,9 @@ for (const [productId, files] of Object.entries(map)) {
     r2Put(key, file)
     const id = uid(productId, i)
     const alt = `${productId} image ${i + 1}`
-    d1(`INSERT OR IGNORE INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${id}', '${productId}', '${key}', '${alt}', ${i});`)
+    d1(
+      `INSERT OR IGNORE INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${id}', '${productId}', '${key}', '${alt}', ${i});`,
+    )
   })
 }
 console.log('Images uploadées et liées (scope:', scope, ')')
@@ -474,24 +547,60 @@ git commit -m "feat: upload product images to R2 and link them"
 ### Task 7 : Composants de base (Icon, LogoChip, Photo, Badge)
 
 **Files:**
+
 - Create: `src/components/Icon.tsx`, `src/components/LogoChip.tsx`, `src/components/Photo.tsx`, `src/components/Badge.tsx`
 
 - [ ] **Step 1 : `src/components/Icon.tsx`** — mappe les noms du mockup vers lucide-react.
 
 ```tsx
 import {
-  Home, LayoutGrid, FileText, Phone, Search, ArrowRight, ArrowLeft,
-  Plus, Check, Truck, MapPin, Layers, MessageCircle, X, Minus,
+  Home,
+  LayoutGrid,
+  FileText,
+  Phone,
+  Search,
+  ArrowRight,
+  ArrowLeft,
+  Plus,
+  Check,
+  Truck,
+  MapPin,
+  Layers,
+  MessageCircle,
+  X,
+  Minus,
   type LucideIcon,
 } from 'lucide-react'
 
 const MAP: Record<string, LucideIcon> = {
-  home: Home, grid: LayoutGrid, doc: FileText, phone: Phone, search: Search,
-  'arrow-r': ArrowRight, back: ArrowLeft, plus: Plus, check: Check,
-  truck: Truck, pin: MapPin, layers: Layers, wa: MessageCircle, x: X, minus: Minus,
+  home: Home,
+  grid: LayoutGrid,
+  doc: FileText,
+  phone: Phone,
+  search: Search,
+  'arrow-r': ArrowRight,
+  back: ArrowLeft,
+  plus: Plus,
+  check: Check,
+  truck: Truck,
+  pin: MapPin,
+  layers: Layers,
+  wa: MessageCircle,
+  x: X,
+  minus: Minus,
 }
 
-export function Icon({ name, size = 20, stroke = 2, className }: { name: string; size?: number; stroke?: number; className?: string }) {
+export function Icon({
+  name,
+  size = 20,
+  stroke = 2,
+  className,
+}: {
+  name: string
+  size?: number
+  stroke?: number
+  className?: string
+}) {
   const C = MAP[name] ?? Search
   return <C size={size} strokeWidth={stroke} className={className} />
 }
@@ -514,14 +623,27 @@ export function LogoChip() {
 ```tsx
 import { imgUrl } from '#/lib/img'
 
-export function Photo({ image, alt, height = 140 }: { image?: { key: string; alt: string }; alt: string; height?: number }) {
+export function Photo({
+  image,
+  alt,
+  height = 140,
+}: {
+  image?: { key: string; alt: string }
+  alt: string
+  height?: number
+}) {
   return (
     <div className="photo" style={{ height, background: 'var(--photo-bg)' }}>
       <img
         src={imgUrl(image?.key)}
         alt={image?.alt || alt}
         loading="lazy"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+        }}
       />
     </div>
   )
@@ -531,8 +653,16 @@ export function Photo({ image, alt, height = 140 }: { image?: { key: string; alt
 - [ ] **Step 4 : `src/components/Badge.tsx`**
 
 ```tsx
-export function Badge({ children, accent = false }: { children: React.ReactNode; accent?: boolean }) {
-  return <span className={accent ? 'chip chip-accent' : 'chip'}>{children}</span>
+export function Badge({
+  children,
+  accent = false,
+}: {
+  children: React.ReactNode
+  accent?: boolean
+}) {
+  return (
+    <span className={accent ? 'chip chip-accent' : 'chip'}>{children}</span>
+  )
 }
 ```
 
@@ -550,6 +680,7 @@ git commit -m "feat: add base UI components (Icon, LogoChip, Photo, Badge)"
 ### Task 8 : Store devis (localStorage) + helper WhatsApp + tests
 
 **Files:**
+
 - Create: `src/lib/wa.ts`, `src/lib/devis-store.tsx`
 - Create: `src/lib/wa.test.ts`, `src/lib/devis-store.test.tsx`
 
@@ -589,7 +720,10 @@ export function buildWaUrl(number: string, message: string): string {
   return `https://wa.me/${n}?text=${encodeURIComponent(message)}`
 }
 
-export function buildDevisMessage(lines: Array<DevisLine>, extra?: { name?: string; phone?: string; note?: string }): string {
+export function buildDevisMessage(
+  lines: Array<DevisLine>,
+  extra?: { name?: string; phone?: string; note?: string },
+): string {
   let m = 'Bonjour NSDPF, voici ma demande de devis :\n\n'
   for (const l of lines) m += `• ${l.name} — ${l.qty} × (${l.format})\n`
   if (extra?.name) m += `\nNom : ${extra.name}`
@@ -605,7 +739,13 @@ export function buildDevisMessage(lines: Array<DevisLine>, extra?: { name?: stri
 - [ ] **Step 5 : Écrire `src/lib/devis-store.tsx`** — contexte React + persistance localStorage.
 
 ```tsx
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react'
 
 const KEY = 'sdpf_devis_v1'
 type Devis = Record<string, number> // productId -> qty
@@ -639,7 +779,8 @@ export function DevisProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (typeof localStorage !== 'undefined') localStorage.setItem(KEY, JSON.stringify(devis))
+    if (typeof localStorage !== 'undefined')
+      localStorage.setItem(KEY, JSON.stringify(devis))
   }, [devis])
 
   const toggle = useCallback((id: string) => {
@@ -658,14 +799,24 @@ export function DevisProvider({ children }: { children: React.ReactNode }) {
       return n
     })
   }, [])
-  const remove = useCallback((id: string) => setDevis((d) => { const n = { ...d }; delete n[id]; return n }), [])
+  const remove = useCallback(
+    (id: string) =>
+      setDevis((d) => {
+        const n = { ...d }
+        delete n[id]
+        return n
+      }),
+    [],
+  )
   const clear = useCallback(() => setDevis({}), [])
 
   const count = Object.keys(devis).length
   const has = (id: string) => !!devis[id]
 
   return (
-    <DevisContext.Provider value={{ devis, count, has, toggle, setQty, remove, clear }}>
+    <DevisContext.Provider
+      value={{ devis, count, has, toggle, setQty, remove, clear }}
+    >
       {children}
     </DevisContext.Provider>
   )
@@ -685,7 +836,9 @@ import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { DevisProvider, useDevis } from './devis-store'
 
-const wrapper = ({ children }: { children: React.ReactNode }) => <DevisProvider>{children}</DevisProvider>
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <DevisProvider>{children}</DevisProvider>
+)
 
 describe('devis-store', () => {
   it('toggle ajoute puis retire un produit', () => {
@@ -723,6 +876,7 @@ git commit -m "feat: add devis store and WhatsApp helpers with tests"
 ### Task 9 : Shell applicatif + navigation responsive
 
 **Files:**
+
 - Create: `src/components/BottomNav.tsx`, `src/components/TopNav.tsx`, `src/components/AppShell.tsx`
 - Rewrite: `src/routes/__root.tsx`
 
@@ -748,10 +902,17 @@ export function BottomNav() {
       {ITEMS.map((it) => {
         const on = it.to === '/' ? path === '/' : path.startsWith(it.to)
         return (
-          <Link key={it.to} to={it.to} className="navitem" data-on={on ? 'true' : 'false'}>
+          <Link
+            key={it.to}
+            to={it.to}
+            className="navitem"
+            data-on={on ? 'true' : 'false'}
+          >
             <Icon name={it.icon} size={23} stroke={on ? 2.4 : 2} />
             <span>{it.label}</span>
-            {it.to === '/devis' && count > 0 && <span className="nav-badge">{count}</span>}
+            {it.to === '/devis' && count > 0 && (
+              <span className="nav-badge">{count}</span>
+            )}
           </Link>
         )
       })}
@@ -774,7 +935,9 @@ export function TopNav({ whatsapp }: { whatsapp: string }) {
     <header className="topnav">
       <Link to="/" className="topnav-brand">
         <LogoChip />
-        <span className="topnav-name">NSDPF<small>PLÂTRE &amp; FILASSE</small></span>
+        <span className="topnav-name">
+          NSDPF<small>PLÂTRE &amp; FILASSE</small>
+        </span>
       </Link>
       <nav className="topnav-links">
         <Link to="/">Accueil</Link>
@@ -782,11 +945,17 @@ export function TopNav({ whatsapp }: { whatsapp: string }) {
         <Link to="/contact">Contact</Link>
       </nav>
       <div className="topnav-actions">
-        <a className="btn btn-wa" href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener">
+        <a
+          className="btn btn-wa"
+          href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
+          target="_blank"
+          rel="noopener"
+        >
           <Icon name="wa" size={18} /> WhatsApp
         </a>
         <Link to="/devis" className="btn btn-brand">
-          <Icon name="doc" size={18} /> Mon devis{count > 0 ? ` (${count})` : ''}
+          <Icon name="doc" size={18} /> Mon devis
+          {count > 0 ? ` (${count})` : ''}
         </Link>
       </div>
     </header>
@@ -802,7 +971,13 @@ Ajouter à `styles.css` : `.topnav { display:none; } @media(min-width:1024px){ .
 import { TopNav } from './TopNav'
 import { BottomNav } from './BottomNav'
 
-export function AppShell({ whatsapp, children }: { whatsapp: string; children: React.ReactNode }) {
+export function AppShell({
+  whatsapp,
+  children,
+}: {
+  whatsapp: string
+  children: React.ReactNode
+}) {
   return (
     <>
       <TopNav whatsapp={whatsapp} />
@@ -816,7 +991,12 @@ export function AppShell({ whatsapp, children }: { whatsapp: string; children: R
 - [ ] **Step 4 : Réécrire `src/routes/__root.tsx`** — providers + shell + loader des settings (pour le numéro WhatsApp global).
 
 ```tsx
-import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import appCss from '#/styles.css?url'
 import { DevisProvider } from '#/lib/devis-store'
 import { AppShell } from '#/components/AppShell'
@@ -878,6 +1058,7 @@ git commit -m "feat: responsive app shell with bottom/top navigation"
 ### Task 10 : Composants catalogue (SearchBar, ProductCard, CategoryCard, QtyStepper)
 
 **Files:**
+
 - Create: `src/components/SearchBar.tsx`, `src/components/ProductCard.tsx`, `src/components/CategoryCard.tsx`, `src/components/QtyStepper.tsx`
 
 **Source :** `/tmp/nsdpf-mockup/components.jsx` (`ProductCard`) et `screens.jsx`.
@@ -887,14 +1068,39 @@ git commit -m "feat: responsive app shell with bottom/top navigation"
 ```tsx
 import { Icon } from './Icon'
 
-export function SearchBar({ value, onChange, placeholder = 'Rechercher…', onSubmit }: {
-  value: string; onChange: (v: string) => void; placeholder?: string; onSubmit?: () => void
+export function SearchBar({
+  value,
+  onChange,
+  placeholder = 'Rechercher…',
+  onSubmit,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  onSubmit?: () => void
 }) {
   return (
-    <form className="searchbar" onSubmit={(e) => { e.preventDefault(); onSubmit?.() }}>
+    <form
+      className="searchbar"
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit?.()
+      }}
+    >
       <Icon name="search" size={20} />
-      <input placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} />
-      {value && <span onClick={() => onChange('')} style={{ cursor: 'pointer', color: 'var(--muted)', fontSize: 18 }}>✕</span>}
+      <input
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {value && (
+        <span
+          onClick={() => onChange('')}
+          style={{ cursor: 'pointer', color: 'var(--muted)', fontSize: 18 }}
+        >
+          ✕
+        </span>
+      )}
     </form>
   )
 }
@@ -914,7 +1120,11 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   const inDevis = has(product.id)
   return (
     <div className="card pcard">
-      <Link to="/produit/$slug" params={{ slug: product.slug }} className="pcard-link">
+      <Link
+        to="/produit/$slug"
+        params={{ slug: product.slug }}
+        className="pcard-link"
+      >
         <Photo image={product.images[0]} alt={product.name} height={120} />
         <div className="pc-body">
           <div className="pc-name">{product.name}</div>
@@ -925,7 +1135,10 @@ export function ProductCard({ product }: { product: ProductDTO }) {
         className="pc-add"
         data-on={inDevis ? 'true' : 'false'}
         aria-label="Ajouter au devis"
-        onClick={(e) => { e.preventDefault(); toggle(product.id) }}
+        onClick={(e) => {
+          e.preventDefault()
+          toggle(product.id)
+        }}
       >
         <Icon name={inDevis ? 'check' : 'plus'} size={18} stroke={2.6} />
       </button>
@@ -942,10 +1155,22 @@ export function ProductCard({ product }: { product: ProductDTO }) {
 import { Link } from '@tanstack/react-router'
 import type { CategoryDTO } from '#/lib/catalog'
 
-export function CategoryCard({ category, count }: { category: CategoryDTO; count: number }) {
+export function CategoryCard({
+  category,
+  count,
+}: {
+  category: CategoryDTO
+  count: number
+}) {
   return (
-    <Link to="/catalogue" search={{ cat: category.slug }} className="card catcard">
-      <div className="label catcard-count">{String(count).padStart(2, '0')} réf.</div>
+    <Link
+      to="/catalogue"
+      search={{ cat: category.slug }}
+      className="card catcard"
+    >
+      <div className="label catcard-count">
+        {String(count).padStart(2, '0')} réf.
+      </div>
       <div className="catcard-label">{category.label}</div>
       <div className="catcard-desc">{category.description}</div>
     </Link>
@@ -960,12 +1185,30 @@ Ajouter à `styles.css` les classes `.catcard`, `.catcard-count`, `.catcard-labe
 ```tsx
 import { Icon } from './Icon'
 
-export function QtyStepper({ qty, onChange }: { qty: number; onChange: (q: number) => void }) {
+export function QtyStepper({
+  qty,
+  onChange,
+}: {
+  qty: number
+  onChange: (q: number) => void
+}) {
   return (
     <span className="qty">
-      <button type="button" aria-label="Diminuer" onClick={() => onChange(qty - 1)}><Icon name="minus" size={15} /></button>
+      <button
+        type="button"
+        aria-label="Diminuer"
+        onClick={() => onChange(qty - 1)}
+      >
+        <Icon name="minus" size={15} />
+      </button>
       <span>{qty}</span>
-      <button type="button" aria-label="Augmenter" onClick={() => onChange(qty + 1)}><Icon name="plus" size={15} /></button>
+      <button
+        type="button"
+        aria-label="Augmenter"
+        onClick={() => onChange(qty + 1)}
+      >
+        <Icon name="plus" size={15} />
+      </button>
     </span>
   )
 }
@@ -985,6 +1228,7 @@ git commit -m "feat: add catalog UI components"
 ### Task 11 : Page Accueil (`/`)
 
 **Files:**
+
 - Rewrite: `src/routes/index.tsx`
 
 **Source :** `screens.jsx` `HomeScreen` (hero, recherche, 3 atouts Livraison/Devis/Retrait, grille catégories, produits vedettes).
@@ -1002,9 +1246,14 @@ import { Icon } from '#/components/Icon'
 
 export const Route = createFileRoute('/')({
   loader: async () => {
-    const [categories, featured, products] = await Promise.all([getCategories(), getFeatured(), getProducts()])
+    const [categories, featured, products] = await Promise.all([
+      getCategories(),
+      getFeatured(),
+      getProducts(),
+    ])
     const counts: Record<string, number> = {}
-    for (const p of products) counts[p.categoryId] = (counts[p.categoryId] ?? 0) + 1
+    for (const p of products)
+      counts[p.categoryId] = (counts[p.categoryId] ?? 0) + 1
     return { categories, featured, counts }
   },
   component: Home,
@@ -1020,31 +1269,70 @@ function Home() {
     <div className="pb-nav">
       <section className="hero">
         <p className="label hero-kicker">Nouvelle Société de Distribution</p>
-        <h1 className="hero-title">Le plâtre &amp; la filasse,<br />au cœur de vos chantiers.</h1>
-        <p className="hero-sub">Plâtres, plaques, carreaux, filasse et accessoires de finition. Devis rapide et livraison sur chantier.</p>
+        <h1 className="hero-title">
+          Le plâtre &amp; la filasse,
+          <br />
+          au cœur de vos chantiers.
+        </h1>
+        <p className="hero-sub">
+          Plâtres, plaques, carreaux, filasse et accessoires de finition. Devis
+          rapide et livraison sur chantier.
+        </p>
         <div className="hero-cta">
-          <Link to="/catalogue" className="btn btn-primary">Voir le catalogue <Icon name="arrow-r" size={18} stroke={2.4} /></Link>
-          <Link to="/devis" className="btn btn-ghost">Devis</Link>
+          <Link to="/catalogue" className="btn btn-primary">
+            Voir le catalogue <Icon name="arrow-r" size={18} stroke={2.4} />
+          </Link>
+          <Link to="/devis" className="btn btn-ghost">
+            Devis
+          </Link>
         </div>
       </section>
 
       <div className="pad">
-        <SearchBar value={q} onChange={setQ} placeholder="Rechercher un produit…" onSubmit={goSearch} />
+        <SearchBar
+          value={q}
+          onChange={setQ}
+          placeholder="Rechercher un produit…"
+          onSubmit={goSearch}
+        />
 
         <div className="perks">
-          <div className="perk"><Icon name="truck" size={22} /><b>Livraison</b><span className="label">sur chantier</span></div>
-          <div className="perk"><Icon name="doc" size={22} /><b>Devis</b><span className="label">sous 24 h</span></div>
-          <div className="perk"><Icon name="pin" size={22} /><b>Retrait</b><span className="label">au dépôt</span></div>
+          <div className="perk">
+            <Icon name="truck" size={22} />
+            <b>Livraison</b>
+            <span className="label">sur chantier</span>
+          </div>
+          <div className="perk">
+            <Icon name="doc" size={22} />
+            <b>Devis</b>
+            <span className="label">sous 24 h</span>
+          </div>
+          <div className="perk">
+            <Icon name="pin" size={22} />
+            <b>Retrait</b>
+            <span className="label">au dépôt</span>
+          </div>
         </div>
 
-        <div className="section-head"><span className="sh-title">Nos gammes</span><Link to="/catalogue" className="sh-link">Tout voir</Link></div>
+        <div className="section-head">
+          <span className="sh-title">Nos gammes</span>
+          <Link to="/catalogue" className="sh-link">
+            Tout voir
+          </Link>
+        </div>
         <div className="catgrid">
-          {categories.map((c) => <CategoryCard key={c.id} category={c} count={counts[c.id] ?? 0} />)}
+          {categories.map((c) => (
+            <CategoryCard key={c.id} category={c} count={counts[c.id] ?? 0} />
+          ))}
         </div>
 
-        <div className="section-head"><span className="sh-title">Produits vedettes</span></div>
+        <div className="section-head">
+          <span className="sh-title">Produits vedettes</span>
+        </div>
         <div className="pgrid">
-          {featured.map((p) => <ProductCard key={p.id} product={p} />)}
+          {featured.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
       </div>
     </div>
@@ -1068,6 +1356,7 @@ git commit -m "feat: NSDPF home page"
 ### Task 12 : Page Catalogue (`/catalogue`) — filtre + recherche
 
 **Files:**
+
 - Create: `src/routes/catalogue.tsx`
 
 **Source :** `screens.jsx` `CatalogueScreen` (recherche + chips de filtre + grille + état vide). État `cat`/`q` dans l'URL (`search`).
@@ -1089,7 +1378,10 @@ export const Route = createFileRoute('/catalogue')({
     q: typeof s.q === 'string' ? s.q : undefined,
   }),
   loader: async () => {
-    const [categories, products] = await Promise.all([getCategories(), getProducts()])
+    const [categories, products] = await Promise.all([
+      getCategories(),
+      getProducts(),
+    ])
     return { categories, products }
   },
   component: Catalogue,
@@ -1100,40 +1392,71 @@ function Catalogue() {
   const { cat = 'all', q = '' } = Route.useSearch()
   const navigate = useNavigate({ from: '/catalogue' })
 
-  const setCat = (c: string) => navigate({ search: (prev) => ({ ...prev, cat: c === 'all' ? undefined : c }) })
-  const setQ = (v: string) => navigate({ search: (prev) => ({ ...prev, q: v || undefined }) })
+  const setCat = (c: string) =>
+    navigate({
+      search: (prev) => ({ ...prev, cat: c === 'all' ? undefined : c }),
+    })
+  const setQ = (v: string) =>
+    navigate({ search: (prev) => ({ ...prev, q: v || undefined }) })
 
   const needle = q.trim().toLowerCase()
   const list = products.filter((p) => {
     const okCat = cat === 'all' || p.categoryId === cat
-    const okQ = !needle || p.name.toLowerCase().includes(needle) || p.descShort.toLowerCase().includes(needle)
+    const okQ =
+      !needle ||
+      p.name.toLowerCase().includes(needle) ||
+      p.descShort.toLowerCase().includes(needle)
     return okCat && okQ
   })
-  const catLabel = categories.find((c) => c.slug === cat)?.label ?? 'Tous les produits'
+  const catLabel =
+    categories.find((c) => c.slug === cat)?.label ?? 'Tous les produits'
 
   return (
     <div className="pb-nav">
-      <div className="appbar"><div className="bar-title">Catalogue</div></div>
+      <div className="appbar">
+        <div className="bar-title">Catalogue</div>
+      </div>
       <div className="pad">
         <SearchBar value={q} onChange={setQ} />
         <div className="filters" style={{ marginTop: 12 }}>
-          <button className="fchip" data-on={cat === 'all'} onClick={() => setCat('all')}>Tous</button>
+          <button
+            className="fchip"
+            data-on={cat === 'all'}
+            onClick={() => setCat('all')}
+          >
+            Tous
+          </button>
           {categories.map((c) => (
-            <button key={c.id} className="fchip" data-on={cat === c.slug} onClick={() => setCat(c.slug)}>{c.short}</button>
+            <button
+              key={c.id}
+              className="fchip"
+              data-on={cat === c.slug}
+              onClick={() => setCat(c.slug)}
+            >
+              {c.short}
+            </button>
           ))}
         </div>
         <div className="section-head" style={{ marginTop: 18 }}>
-          <span className="sh-title">{cat === 'all' ? 'Tous les produits' : catLabel}</span>
-          <span className="label" style={{ color: 'var(--muted)' }}>{list.length} réf.</span>
+          <span className="sh-title">
+            {cat === 'all' ? 'Tous les produits' : catLabel}
+          </span>
+          <span className="label" style={{ color: 'var(--muted)' }}>
+            {list.length} réf.
+          </span>
         </div>
         {list.length === 0 ? (
           <div className="empty">
-            <div className="em-ic"><Icon name="search" size={44} stroke={1.5} /></div>
+            <div className="em-ic">
+              <Icon name="search" size={44} stroke={1.5} />
+            </div>
             Aucun produit ne correspond.
           </div>
         ) : (
           <div className="pgrid">
-            {list.map((p) => <ProductCard key={p.id} product={p} />)}
+            {list.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         )}
       </div>
@@ -1156,6 +1479,7 @@ git commit -m "feat: catalogue page with category filter and search"
 ### Task 13 : Fiche produit (`/produit/$slug`)
 
 **Files:**
+
 - Create: `src/routes/produit.$slug.tsx`
 
 **Source :** `screens.jsx` `DetailScreen` (image(s), format, description longue, bouton ajouter au devis, commander via WhatsApp, « Dans la même gamme »).
@@ -1176,7 +1500,9 @@ export const Route = createFileRoute('/produit/$slug')({
     const product = await getProductBySlug({ data: params.slug })
     if (!product) throw notFound()
     const [all, settings] = await Promise.all([getProducts(), getSettings()])
-    const related = all.filter((p) => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 4)
+    const related = all
+      .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
+      .slice(0, 4)
     return { product, related, whatsapp: settings.whatsapp_number ?? '' }
   },
   component: Detail,
@@ -1186,12 +1512,17 @@ function Detail() {
   const { product, related, whatsapp } = Route.useLoaderData()
   const { has, toggle } = useDevis()
   const inDevis = has(product.id)
-  const waUrl = buildWaUrl(whatsapp, `Bonjour NSDPF, je souhaite un devis pour :\n• ${product.name} (${product.format})\n\nMerci.`)
+  const waUrl = buildWaUrl(
+    whatsapp,
+    `Bonjour NSDPF, je souhaite un devis pour :\n• ${product.name} (${product.format})\n\nMerci.`,
+  )
 
   return (
     <div className="pb-nav">
       <div className="detail-media">
-        <Link to="/catalogue" className="detail-back" aria-label="Retour"><Icon name="back" size={22} /></Link>
+        <Link to="/catalogue" className="detail-back" aria-label="Retour">
+          <Icon name="back" size={22} />
+        </Link>
         <Photo image={product.images[0]} alt={product.name} height={300} />
       </div>
       <div className="pad detail-body fade-in">
@@ -1199,24 +1530,52 @@ function Detail() {
         <h1 className="detail-title">{product.name}</h1>
         <p className="detail-desc">{product.descLong}</p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
-          <button className={'btn btn-block btn-lg ' + (inDevis ? 'btn-brand' : 'btn-primary')} onClick={() => toggle(product.id)}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            marginTop: 22,
+          }}
+        >
+          <button
+            className={
+              'btn btn-block btn-lg ' + (inDevis ? 'btn-brand' : 'btn-primary')
+            }
+            onClick={() => toggle(product.id)}
+          >
             <Icon name={inDevis ? 'check' : 'plus'} size={20} stroke={2.4} />
             {inDevis ? 'Ajouté au devis' : 'Ajouter au devis'}
           </button>
-          <a className="btn btn-wa btn-block btn-lg" href={waUrl} target="_blank" rel="noopener">
+          <a
+            className="btn btn-wa btn-block btn-lg"
+            href={waUrl}
+            target="_blank"
+            rel="noopener"
+          >
             <Icon name="wa" size={20} /> Commander via WhatsApp
           </a>
         </div>
 
         {related.length > 0 && (
           <>
-            <div className="section-head"><span className="sh-title">Dans la même gamme</span></div>
+            <div className="section-head">
+              <span className="sh-title">Dans la même gamme</span>
+            </div>
             <div className="related-row">
               {related.map((p) => (
-                <Link key={p.id} to="/produit/$slug" params={{ slug: p.slug }} className="card pcard related-card">
+                <Link
+                  key={p.id}
+                  to="/produit/$slug"
+                  params={{ slug: p.slug }}
+                  className="card pcard related-card"
+                >
                   <Photo image={p.images[0]} alt={p.name} height={104} />
-                  <div className="pc-body"><div className="pc-name" style={{ fontSize: 13 }}>{p.name}</div></div>
+                  <div className="pc-body">
+                    <div className="pc-name" style={{ fontSize: 13 }}>
+                      {p.name}
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -1244,6 +1603,7 @@ git commit -m "feat: product detail page"
 ### Task 14 : Page Devis (`/devis`) + WhatsApp
 
 **Files:**
+
 - Create: `src/routes/devis.tsx`
 
 **Source :** `screens.jsx` `DevisScreen` (liste avec quantités, champs nom/tél/note, bouton envoyer WhatsApp, vider, état vide).
@@ -1261,7 +1621,10 @@ import { buildWaUrl, buildDevisMessage } from '#/lib/wa'
 
 export const Route = createFileRoute('/devis')({
   loader: async () => {
-    const [products, settings] = await Promise.all([getProducts(), getSettings()])
+    const [products, settings] = await Promise.all([
+      getProducts(),
+      getSettings(),
+    ])
     return { products, whatsapp: settings.whatsapp_number ?? '' }
   },
   component: DevisPage,
@@ -1278,19 +1641,36 @@ function DevisPage() {
   const lines = ids
     .map((id) => products.find((p) => p.id === id))
     .filter((p): p is NonNullable<typeof p> => !!p)
-    .map((p) => ({ id: p.id, name: p.name, format: p.format, qty: devis[p.id] }))
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      format: p.format,
+      qty: devis[p.id],
+    }))
 
-  const waUrl = buildWaUrl(whatsapp, buildDevisMessage(lines, { name, phone, note }))
+  const waUrl = buildWaUrl(
+    whatsapp,
+    buildDevisMessage(lines, { name, phone, note }),
+  )
 
   if (ids.length === 0) {
     return (
       <div className="pb-nav">
-        <div className="appbar"><div className="bar-title">Mon devis</div></div>
+        <div className="appbar">
+          <div className="bar-title">Mon devis</div>
+        </div>
         <div className="empty" style={{ paddingTop: 60 }}>
-          <div className="em-ic"><Icon name="doc" size={52} stroke={1.4} /></div>
+          <div className="em-ic">
+            <Icon name="doc" size={52} stroke={1.4} />
+          </div>
           <div className="empty-title">Votre devis est vide</div>
-          <p style={{ maxWidth: 240, margin: '0 auto 20px' }}>Ajoutez des produits depuis le catalogue pour préparer votre demande.</p>
-          <Link to="/catalogue" className="btn btn-primary">Parcourir le catalogue</Link>
+          <p style={{ maxWidth: 240, margin: '0 auto 20px' }}>
+            Ajoutez des produits depuis le catalogue pour préparer votre
+            demande.
+          </p>
+          <Link to="/catalogue" className="btn btn-primary">
+            Parcourir le catalogue
+          </Link>
         </div>
       </div>
     )
@@ -1298,11 +1678,28 @@ function DevisPage() {
 
   return (
     <div className="pb-nav">
-      <div className="appbar"><div className="bar-title">Mon devis</div></div>
+      <div className="appbar">
+        <div className="bar-title">Mon devis</div>
+      </div>
       <div className="pad">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <span className="label" style={{ color: 'var(--muted)' }}>{ids.length} produit{ids.length > 1 ? 's' : ''}</span>
-          <span className="sh-link" style={{ cursor: 'pointer' }} onClick={clear}>Vider</span>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 12,
+          }}
+        >
+          <span className="label" style={{ color: 'var(--muted)' }}>
+            {ids.length} produit{ids.length > 1 ? 's' : ''}
+          </span>
+          <span
+            className="sh-link"
+            style={{ cursor: 'pointer' }}
+            onClick={clear}
+          >
+            Vider
+          </span>
         </div>
 
         <div className="devis-list">
@@ -1310,24 +1707,58 @@ function DevisPage() {
             <div key={l.id} className="devis-row card">
               <div className="devis-info">
                 <div className="pc-name">{l.name}</div>
-                <div className="label" style={{ color: 'var(--muted)' }}>{l.format}</div>
+                <div className="label" style={{ color: 'var(--muted)' }}>
+                  {l.format}
+                </div>
               </div>
               <QtyStepper qty={l.qty} onChange={(q) => setQty(l.id, q)} />
-              <button className="devis-del" aria-label="Retirer" onClick={() => remove(l.id)}><Icon name="x" size={18} /></button>
+              <button
+                className="devis-del"
+                aria-label="Retirer"
+                onClick={() => remove(l.id)}
+              >
+                <Icon name="x" size={18} />
+              </button>
             </div>
           ))}
         </div>
 
         <div className="devis-form">
           <label className="field-label">Nom</label>
-          <input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="Votre nom" />
-          <label className="field-label" style={{ marginTop: 12 }}>Téléphone</label>
-          <input className="field" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Votre numéro" />
-          <label className="field-label" style={{ marginTop: 12 }}>Note</label>
-          <textarea className="field" rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Précisions (chantier, délais…)" />
+          <input
+            className="field"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Votre nom"
+          />
+          <label className="field-label" style={{ marginTop: 12 }}>
+            Téléphone
+          </label>
+          <input
+            className="field"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Votre numéro"
+          />
+          <label className="field-label" style={{ marginTop: 12 }}>
+            Note
+          </label>
+          <textarea
+            className="field"
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Précisions (chantier, délais…)"
+          />
         </div>
 
-        <a className="btn btn-wa btn-block btn-lg" style={{ marginTop: 18 }} href={waUrl} target="_blank" rel="noopener">
+        <a
+          className="btn btn-wa btn-block btn-lg"
+          style={{ marginTop: 18 }}
+          href={waUrl}
+          target="_blank"
+          rel="noopener"
+        >
           <Icon name="wa" size={20} /> Envoyer sur WhatsApp
         </a>
       </div>
@@ -1352,6 +1783,7 @@ git commit -m "feat: devis page with quantities and WhatsApp submission"
 ### Task 15 : Page Contact (`/contact`)
 
 **Files:**
+
 - Create: `src/routes/contact.tsx`
 
 - [ ] **Step 1 : Écrire `src/routes/contact.tsx`**
@@ -1372,14 +1804,31 @@ function Contact() {
   const wa = settings.whatsapp_number ?? ''
   return (
     <div className="pb-nav">
-      <div className="appbar"><div className="bar-title">Contact</div></div>
+      <div className="appbar">
+        <div className="bar-title">Contact</div>
+      </div>
       <div className="pad">
         <div className="card contact-card">
-          <div className="contact-row"><Icon name="phone" size={20} /><span>{settings.contact_phone ?? ''}</span></div>
-          <div className="contact-row"><Icon name="doc" size={20} /><span>{settings.contact_email ?? ''}</span></div>
-          <div className="contact-row"><Icon name="pin" size={20} /><span>{settings.contact_address ?? ''}</span></div>
+          <div className="contact-row">
+            <Icon name="phone" size={20} />
+            <span>{settings.contact_phone ?? ''}</span>
+          </div>
+          <div className="contact-row">
+            <Icon name="doc" size={20} />
+            <span>{settings.contact_email ?? ''}</span>
+          </div>
+          <div className="contact-row">
+            <Icon name="pin" size={20} />
+            <span>{settings.contact_address ?? ''}</span>
+          </div>
         </div>
-        <a className="btn btn-wa btn-block btn-lg" style={{ marginTop: 18 }} href={buildWaUrl(wa, 'Bonjour NSDPF,')} target="_blank" rel="noopener">
+        <a
+          className="btn btn-wa btn-block btn-lg"
+          style={{ marginTop: 18 }}
+          href={buildWaUrl(wa, 'Bonjour NSDPF,')}
+          target="_blank"
+          rel="noopener"
+        >
           <Icon name="wa" size={20} /> Discuter sur WhatsApp
         </a>
       </div>

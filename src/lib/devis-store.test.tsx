@@ -3,7 +3,9 @@ import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { DevisProvider, useDevis } from './devis-store'
 
-const wrapper = ({ children }: { children: React.ReactNode }) => <DevisProvider>{children}</DevisProvider>
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <DevisProvider>{children}</DevisProvider>
+)
 
 describe('devis-store', () => {
   it('toggle ajoute puis retire un produit', () => {

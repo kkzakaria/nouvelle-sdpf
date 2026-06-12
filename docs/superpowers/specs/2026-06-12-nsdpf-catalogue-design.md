@@ -34,11 +34,12 @@ lucide-react, zod, @tanstack/react-form.
 
 ## 2. Approche retenue
 
-**TanStack Start natif (Approche A).** Les pages publiques lisent D1 via les *loaders* de route
-(SSR pour le SEO) ; l'admin mute via des *server functions* protégées par la session better-auth ;
+**TanStack Start natif (Approche A).** Les pages publiques lisent D1 via les _loaders_ de route
+(SSR pour le SEO) ; l'admin mute via des _server functions_ protégées par la session better-auth ;
 les images transitent par une route Worker `/img/$key` lisant R2 avec cache.
 
 Alternatives écartées :
+
 - **API REST séparée (Hono)** : boilerplate redondant, les server functions suffisent.
 - **SSG au build** : les modifs admin ne seraient visibles qu'après rebuild — incompatible avec
   l'édition en direct.
@@ -60,12 +61,12 @@ TanStack Start (React 19) — Cloudflare Workers (@cloudflare/vite-plugin)
 
 Le scaffold actuel est câblé pour du SQLite local et ne tourne pas sur Workers tel quel.
 
-| Fichier | Actuel | Cible |
-|---|---|---|
-| `src/db/index.ts` | `drizzle-orm/better-sqlite3` + `process.env.DATABASE_URL` | `drizzle-orm/d1` avec binding `env.DB` (via `cloudflare:workers`) |
-| `wrangler.jsonc` | nom `tanstack-start-app`, aucun binding | nom `nouvelle-sdpf`, bindings `DB` (D1) + `IMAGES` (R2) |
-| `src/lib/auth.ts` | better-auth sans base | `drizzleAdapter` sur D1 + tables auth dans le schéma |
-| `drizzle.config.ts` | dialecte sqlite local | dialecte `sqlite` / driver `d1-http` pour migrations D1 |
+| Fichier             | Actuel                                                    | Cible                                                             |
+| ------------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
+| `src/db/index.ts`   | `drizzle-orm/better-sqlite3` + `process.env.DATABASE_URL` | `drizzle-orm/d1` avec binding `env.DB` (via `cloudflare:workers`) |
+| `wrangler.jsonc`    | nom `tanstack-start-app`, aucun binding                   | nom `nouvelle-sdpf`, bindings `DB` (D1) + `IMAGES` (R2)           |
+| `src/lib/auth.ts`   | better-auth sans base                                     | `drizzleAdapter` sur D1 + tables auth dans le schéma              |
+| `drizzle.config.ts` | dialecte sqlite local                                     | dialecte `sqlite` / driver `d1-http` pour migrations D1           |
 
 Les routes de démo (`src/routes/demo/*`, hooks/composants `demo.*`) seront supprimées.
 
@@ -73,13 +74,13 @@ Les routes de démo (`src/routes/demo/*`, hooks/composants `demo.*`) seront supp
 
 ## 4. Modèle de données (D1 / drizzle)
 
-| Table | Champs |
-|---|---|
-| `categories` | `id` (pk), `slug` (unique), `label`, `short`, `description`, `sort_order` |
-| `products` | `id` (pk), `slug` (unique), `category_id` (FK→categories), `name`, `format`, `desc_short`, `desc_long`, `featured` (bool, défaut false), `sort_order`, `created_at` |
-| `product_images` | `id` (pk), `product_id` (FK→products), `r2_key`, `alt`, `sort_order` — **N images par produit** |
-| `settings` | `key` (pk), `value` — entrées : `whatsapp_number`, `contact_phone`, `contact_email`, `contact_address` |
-| `user`, `session`, `account`, `verification` | tables better-auth (schéma généré/aligné sur la version installée) |
+| Table                                        | Champs                                                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `categories`                                 | `id` (pk), `slug` (unique), `label`, `short`, `description`, `sort_order`                                                                                           |
+| `products`                                   | `id` (pk), `slug` (unique), `category_id` (FK→categories), `name`, `format`, `desc_short`, `desc_long`, `featured` (bool, défaut false), `sort_order`, `created_at` |
+| `product_images`                             | `id` (pk), `product_id` (FK→products), `r2_key`, `alt`, `sort_order` — **N images par produit**                                                                     |
+| `settings`                                   | `key` (pk), `value` — entrées : `whatsapp_number`, `contact_phone`, `contact_email`, `contact_address`                                                              |
+| `user`, `session`, `account`, `verification` | tables better-auth (schéma généré/aligné sur la version installée)                                                                                                  |
 
 Suppression d'une catégorie : interdite s'il reste des produits liés (ou réassignation explicite).
 Suppression d'un produit : supprime ses `product_images` (et les objets R2 correspondants).
@@ -92,23 +93,23 @@ Le panier **Devis** n'a **aucune table** — il vit en localStorage côté clien
 
 ### Public (mobile-first, responsive desktop)
 
-| Route | Écran | Contenu |
-|---|---|---|
-| `/` | Accueil | Hero, recherche, 3 atouts (Livraison/Devis/Retrait), grille catégories, produits vedettes |
-| `/catalogue` | Catalogue | Recherche + filtres catégorie, grille produits ; état dans l'URL (`?cat=`, `?q=`) |
-| `/produit/$slug` | Détail | Carrousel images, format, description longue, « Ajouter au devis » |
-| `/devis` | Mon devis | Liste localStorage + quantités, « Envoyer sur WhatsApp » |
-| `/contact` | Contact | Coordonnées (depuis `settings`) + lien WhatsApp |
+| Route            | Écran     | Contenu                                                                                   |
+| ---------------- | --------- | ----------------------------------------------------------------------------------------- |
+| `/`              | Accueil   | Hero, recherche, 3 atouts (Livraison/Devis/Retrait), grille catégories, produits vedettes |
+| `/catalogue`     | Catalogue | Recherche + filtres catégorie, grille produits ; état dans l'URL (`?cat=`, `?q=`)         |
+| `/produit/$slug` | Détail    | Carrousel images, format, description longue, « Ajouter au devis »                        |
+| `/devis`         | Mon devis | Liste localStorage + quantités, « Envoyer sur WhatsApp »                                  |
+| `/contact`       | Contact   | Coordonnées (depuis `settings`) + lien WhatsApp                                           |
 
 ### Admin (`/admin`, protégé better-auth)
 
-| Route | Rôle |
-|---|---|
-| `/admin/login` | Connexion email/mot de passe |
-| `/admin` | Tableau de bord (compteurs produits/catégories) |
+| Route                                    | Rôle                                                          |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| `/admin/login`                           | Connexion email/mot de passe                                  |
+| `/admin`                                 | Tableau de bord (compteurs produits/catégories)               |
 | `/admin/produits`, `/admin/produits/$id` | CRUD produits, upload/réordonnancement images, toggle vedette |
-| `/admin/categories` | CRUD + réordonnancement catégories |
-| `/admin/parametres` | Numéro WhatsApp + coordonnées de contact |
+| `/admin/categories`                      | CRUD + réordonnancement catégories                            |
+| `/admin/parametres`                      | Numéro WhatsApp + coordonnées de contact                      |
 
 Garde d'accès : un `beforeLoad` sur le segment `/admin` vérifie la session better-auth et redirige
 vers `/admin/login` sinon. Les server functions de mutation revalident la session côté serveur.
