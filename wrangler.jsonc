@@ -17,5 +17,8 @@
       "binding": "IMAGES",
       "bucket_name": "nsdpf-images"
     }
-  ]
+  ],
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:3000"
+  }
 }
