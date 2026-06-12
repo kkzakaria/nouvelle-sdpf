@@ -39,7 +39,7 @@ function RootComponent() {
   const { settings } = Route.useLoaderData()
   return (
     <DevisProvider>
-      <AppShell whatsapp={settings.whatsapp_number}>
+      <AppShell settings={settings}>
         <Outlet />
       </AppShell>
     </DevisProvider>

@@ -13,6 +13,8 @@ import {
   Layers,
   X,
   Minus,
+  Mail,
+  Clock,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -21,6 +23,8 @@ const MAP: Record<string, LucideIcon> = {
   grid: LayoutGrid,
   doc: FileText,
   phone: Phone,
+  mail: Mail,
+  clock: Clock,
   search: Search,
   'arrow-r': ArrowRight,
   back: ArrowLeft,
