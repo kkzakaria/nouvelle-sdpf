@@ -115,22 +115,14 @@ body {
 .appbar {
   background: var(--head-bg);
   color: var(--head-ink);
-  /* Bandeau inséré (marges gauche/droite) à TOUTES les largeurs */
-  margin: 14px 16px 0;
-  padding: 16px 18px;
-  border-radius: var(--radius-lg);
+  padding: 16px;
   display: flex;
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
   position: relative;
   z-index: 4;
-}
-/* Mobile : marge haute plus généreuse pour l'encoche (barre d'état) */
-@media (max-width: 1023px) {
-  .appbar {
-    margin-top: calc(14px + env(safe-area-inset-top, 0px));
-  }
+  border-bottom: 1px solid color-mix(in srgb, var(--head-ink) 12%, transparent);
 }
 
 .appbar .bar-title {
@@ -637,16 +629,22 @@ textarea.field {
   display: none;
 }
 @media (min-width: 1024px) {
+  /* Barre pleine largeur, mais contenu aligné sur le conteneur de la page */
   .topnav {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 14px 24px;
+    display: block;
     background: var(--surface);
     border-bottom: 1px solid var(--line);
     position: sticky;
     top: 0;
     z-index: 40;
+  }
+  .topnav-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 16px;
   }
   .topnav-brand {
     display: flex;

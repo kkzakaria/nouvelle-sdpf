@@ -7,30 +7,32 @@ export function TopNav({ whatsapp }: { whatsapp: string }) {
   const { count } = useDevis()
   return (
     <header className="topnav">
-      <Link to="/" className="topnav-brand">
-        <LogoChip />
-        <span className="topnav-name">
-          NSDPF<small>PLÂTRE &amp; FILASSE</small>
-        </span>
-      </Link>
-      <nav className="topnav-links">
-        <Link to="/">Accueil</Link>
-        <Link to="/catalogue">Catalogue</Link>
-        <Link to="/contact">Contact</Link>
-      </nav>
-      <div className="topnav-actions">
-        <a
-          className="btn btn-wa"
-          href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
-          target="_blank"
-          rel="noopener"
-        >
-          <Icon name="wa" size={18} /> WhatsApp
-        </a>
-        <Link to="/devis" className="btn btn-brand">
-          <Icon name="doc" size={18} /> Mon devis
-          {count > 0 ? ` (${count})` : ''}
+      <div className="topnav-inner">
+        <Link to="/" className="topnav-brand">
+          <LogoChip />
+          <span className="topnav-name">
+            NSDPF<small>PLÂTRE &amp; FILASSE</small>
+          </span>
         </Link>
+        <nav className="topnav-links">
+          <Link to="/">Accueil</Link>
+          <Link to="/catalogue">Catalogue</Link>
+          <Link to="/contact">Contact</Link>
+        </nav>
+        <div className="topnav-actions">
+          <a
+            className="btn btn-wa"
+            href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
+            target="_blank"
+            rel="noopener"
+          >
+            <Icon name="wa" size={18} /> WhatsApp
+          </a>
+          <Link to="/devis" className="btn btn-brand">
+            <Icon name="doc" size={18} /> Mon devis
+            {count > 0 ? ` (${count})` : ''}
+          </Link>
+        </div>
       </div>
     </header>
   )
