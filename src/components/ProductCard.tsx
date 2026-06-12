@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
         params={{ slug: product.slug }}
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
-        <Photo image={product.images[0]} alt={product.name} height={120} />
+        <Photo image={product.images[0]} alt={product.name} height={180} />
         <div className="pc-body">
           <div className="pc-name">{product.name}</div>
           <div className="pc-desc">{product.format}</div>
