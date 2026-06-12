@@ -92,6 +92,10 @@ body {
   .pb-nav {
     padding-bottom: 24px;
   }
+  /* Pas d'encoche sur desktop : l'appbar reprend la marge standard de la page */
+  .appbar {
+    padding: 16px;
+  }
 }
 
 /* ── Typography ────────────────────────────────────────────────── */
