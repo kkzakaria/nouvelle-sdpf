@@ -19,11 +19,11 @@
     },
   ],
   "vars": {
-    "BETTER_AUTH_URL": "https://nouvelle-sdpf.ci",
+    "BETTER_AUTH_URL": "https://nouvelle-sdpf.com",
   },
   "routes": [
     {
-      "pattern": "nouvelle-sdpf.ci",
+      "pattern": "nouvelle-sdpf.com",
       "custom_domain": true,
     },
   ],
