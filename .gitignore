@@ -11,3 +11,12 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# Source asset archives (extracted, not versioned)
+*.zip
+
+# Cloudflare local secrets
+.dev.vars
+
+# Windows download metadata (WSL)
+*:Zone.Identifier

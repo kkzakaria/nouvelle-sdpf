@@ -1,4 +1,4 @@
-Welcome to your new TanStack Start app! 
+Welcome to your new TanStack Start app!
 
 # Getting Started
 
@@ -40,7 +40,6 @@ If you prefer not to use Tailwind CSS:
 
 ## Linting & Formatting
 
-
 This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
 
 ```bash
@@ -48,7 +47,6 @@ npm run lint
 npm run format
 npm run check
 ```
-
 
 ## Deploy to Cloudflare Workers
 
@@ -61,7 +59,6 @@ This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) an
 For production env vars, run `wrangler secret put MY_VAR` for each secret listed in `.env.example`. Public (non-secret) vars go in `wrangler.jsonc` under `vars`.
 
 KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
-
 
 ## Setting up Better Auth
 
@@ -79,15 +76,15 @@ Better Auth can work in stateless mode, but to persist user data, add a database
 
 ```typescript
 // src/lib/auth.ts
-import { betterAuth } from "better-auth";
-import { Pool } from "pg";
+import { betterAuth } from 'better-auth'
+import { Pool } from 'pg'
 
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
   }),
   // ... rest of config
-});
+})
 ```
 
 Then run migrations:
@@ -95,8 +92,6 @@ Then run migrations:
 ```bash
 npx -y @better-auth/cli migrate
 ```
-
-
 
 ## Routing
 
@@ -115,7 +110,7 @@ Now that you have two routes you can use a `Link` component to navigate between 
 To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
 
 ```tsx
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 ```
 
 Then anywhere in your JSX you can use it like so:
@@ -183,11 +178,11 @@ const getServerTime = createServerFn({
 // Use in a component
 function MyComponent() {
   const [time, setTime] = useState('')
-  
+
   useEffect(() => {
     getServerTime().then(setTime)
   }, [])
-  
+
   return <div>Server time: {time}</div>
 }
 ```

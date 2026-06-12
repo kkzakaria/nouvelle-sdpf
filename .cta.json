@@ -16,11 +16,5 @@
   "routerOnly": false,
   "version": 1,
   "framework": "react",
-  "chosenAddOns": [
-    "eslint",
-    "cloudflare",
-    "drizzle",
-    "form",
-    "better-auth"
-  ]
+  "chosenAddOns": ["eslint", "cloudflare", "drizzle", "form", "better-auth"]
 }
