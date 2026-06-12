@@ -125,11 +125,15 @@ body {
   z-index: 4;
   border-bottom: 1px solid color-mix(in srgb, var(--head-ink) 12%, transparent);
 }
-/* Pas d'encoche sur desktop : l'appbar reprend la marge standard de la page.
+/* Desktop : l'appbar reprend les marges (haut + gauche/droite) de la page,
+   comme un bandeau contenu plutôt que bord à bord.
    Placé APRÈS la règle de base pour gagner à spécificité égale. */
 @media (min-width: 1024px) {
   .appbar {
     padding: 16px;
+    margin: 14px 16px 0;
+    border-radius: var(--radius-lg);
+    border-bottom: none;
   }
 }
 
