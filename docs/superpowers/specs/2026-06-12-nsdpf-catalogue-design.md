@@ -155,7 +155,9 @@ vers `/admin/login` sinon. Les server functions de mutation revalident la sessio
    `featured = ['platre-finition','plaque-ba13','filasse-lin','carreau-std']`.
 2. **Script d'upload images** : 38 photos WhatsApp → R2 + lignes `product_images`, avec mapping
    produit établi en examinant les photos (best effort ; ajustable via l'admin).
-3. **Script compte admin** : création du premier utilisateur better-auth (email/mot de passe).
+3. **Script compte admin** : création du premier utilisateur better-auth avec des **identifiants
+   temporaires** (ex. `admin@nsdpf.local` / mot de passe documenté), à changer dès la première
+   connexion.
 
 ---
 
