@@ -17,3 +17,6 @@ todos.json
 
 # Cloudflare local secrets
 .dev.vars
+
+# Windows download metadata (WSL)
+*:Zone.Identifier
