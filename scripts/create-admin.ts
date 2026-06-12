@@ -10,16 +10,24 @@ const PASSWORD = process.env.ADMIN_PASSWORD ?? 'ChangeMoi!2026'
 async function main() {
   const res = await fetch(`${BASE}/api/auth/sign-up/email`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Origin: BASE },
     body: JSON.stringify({ name: 'Admin NSDPF', email: EMAIL, password: PASSWORD }),
   })
   const body = await res.text()
-  if (!res.ok) {
-    console.error(`Échec (${res.status}): ${body}`)
-    process.exit(1)
+
+  if (res.ok) {
+    console.log(`Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`)
+    console.log('⚠️  Changez ce mot de passe après la première connexion.')
+    return
   }
-  console.log(`Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`)
-  console.log('⚠️  Changez ce mot de passe après la première connexion.')
+
+  if (res.status === 422 || /already.exists|user_already_exists/i.test(body)) {
+    console.log(`Compte admin déjà existant : ${EMAIL} — rien à faire.`)
+    return
+  }
+
+  console.error(`Échec (${res.status}): ${body}`)
+  process.exit(1)
 }
 
 main()
