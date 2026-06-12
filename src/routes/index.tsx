@@ -45,9 +45,9 @@ function Home() {
               au cœur de vos chantiers.
             </h1>
             <p className="lead">
-              Distribution professionnelle de plâtres, plaques, carreaux,
-              filasse et accessoires de finition. Devis rapide et livraison sur
-              chantier.
+              Plâtres, plaques &amp; décoration, filasse &amp; tuyauterie,
+              colles &amp; mortiers, sanitaires et quincaillerie. Devis rapide et
+              livraison sur chantier à Abidjan.
             </p>
             <form
               className="hero-search"

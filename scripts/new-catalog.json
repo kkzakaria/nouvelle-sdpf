@@ -1,0 +1,293 @@
+{
+  "categories": [
+    {
+      "id": "platres",
+      "label": "Plâtres",
+      "short": "Plâtres",
+      "description": "Plâtres de construction et de décoration pour staff, enduits et finitions"
+    },
+    {
+      "id": "plaques-deco",
+      "label": "Plaques & Décoration",
+      "short": "Décoration",
+      "description": "Panneaux, plaques et lambris pour habillage mural et décoration intérieure"
+    },
+    {
+      "id": "filasse-etancheite",
+      "label": "Filasse & Tuyauterie",
+      "short": "Filasse",
+      "description": "Filasse naturelle, tuyaux et raccords pour plomberie et étanchéité"
+    },
+    {
+      "id": "colles-enduits",
+      "label": "Colles & Mortiers",
+      "short": "Colles",
+      "description": "Ciments-colles et mortiers pour la pose de carrelage intérieur et extérieur"
+    },
+    {
+      "id": "sanitaires",
+      "label": "Sanitaires",
+      "short": "Sanitaires",
+      "description": "Lavabos, WC et équipements sanitaires en céramique"
+    },
+    {
+      "id": "outillage-quincaillerie",
+      "label": "Outillage & Quincaillerie",
+      "short": "Outillage",
+      "description": "Outils de chantier, clous, tôles et accessoires de construction"
+    }
+  ],
+  "products": [
+    {
+      "id": "platre-staff-tete-de-lion",
+      "name": "Plâtre pour Staff Tête de Lion",
+      "gamme": "platres",
+      "format": "Sac 40 kg",
+      "descShort": "Plâtre extra blanc pour la réalisation de travaux de staff et de décoration intérieure.",
+      "descLong": "Le Plâtre pour Staff Tête de Lion est un plâtre décoratif extra blanc d'origine égyptienne, idéal pour la confection de moulures, corniches, rosaces et tout ouvrage de staff. Sa finesse et sa blancheur garantissent un résultat lisse et impeccable. Distribué par NSDPF, Abidjan, Côte d'Ivoire.",
+      "image": "ChatGPT Image 12 juin 2026, 16_25_35.png",
+      "featured": true
+    },
+    {
+      "id": "platre-plaque-deco-classique",
+      "name": "Plaque Décorative Plâtre Classique",
+      "gamme": "plaques-deco",
+      "format": "Plaque (unité)",
+      "descShort": "Plaque décorative en plâtre à motifs classiques ornementés pour portes et cloisons.",
+      "descLong": "Cette plaque décorative en plâtre présente un relief classique richement orné de volutes et de rosaces, destinée à l'habillage de portes, de cloisons ou de façades intérieures. Elle apporte une touche d'élégance architecturale à tout espace résidentiel ou commercial.",
+      "image": "ChatGPT Image 12 juin 2026, 17_13_48.png",
+      "featured": true
+    },
+    {
+      "id": "platre-plaque-deco-moderne",
+      "name": "Plaque Décorative Plâtre Moderne",
+      "gamme": "plaques-deco",
+      "format": "Plaque (unité)",
+      "descShort": "Plaque décorative en plâtre à motifs géométriques modernes pour portes et cloisons.",
+      "descLong": "Cette plaque en plâtre au design contemporain et géométrique convient à l'habillage de portes ou de panneaux muraux. Ses lignes épurées et ses encadrements en relief s'intègrent parfaitement dans les intérieurs modernes et minimalistes.",
+      "image": "ChatGPT Image 12 juin 2026, 17_15_05.png",
+      "featured": false
+    },
+    {
+      "id": "lambris-pvc-deco",
+      "name": "Lambris PVC Décoration Murale",
+      "gamme": "plaques-deco",
+      "format": "Panneau (lot)",
+      "descShort": "Panneaux lambris PVC imitation bois pour habillage mural intérieur.",
+      "descLong": "Ces panneaux en PVC à effet bois (chêne clair, wengé, hêtre, rouge) permettent un habillage rapide et durable des murs et plafonds intérieurs. Légers, faciles à poser et résistants à l'humidité, ils conviennent aux pièces à vivre, bureaux et commerces.",
+      "image": "ChatGPT Image 12 juin 2026, 16_53_46.png",
+      "featured": false
+    },
+    {
+      "id": "tole-ondulee-coloree",
+      "name": "Tôle Ondulée Colorée",
+      "gamme": "plaques-deco",
+      "format": "Barre / Feuille (lot)",
+      "descShort": "Tôles ondulées colorées pour couverture et bardage de bâtiments.",
+      "descLong": "Ces tôles ondulées disponibles en plusieurs coloris (orange, vert, rouge) sont utilisées pour la couverture de toitures, hangars et bâtiments agricoles ou commerciaux. Leur résistance aux intempéries et leur finition colorée garantissent durabilité et esthétique.",
+      "image": "ChatGPT Image 12 juin 2026, 16_34_16.png",
+      "featured": false
+    },
+    {
+      "id": "filasse-naturelle",
+      "name": "Filasse Naturelle",
+      "gamme": "filasse-etancheite",
+      "format": "Pelote / Botte",
+      "descShort": "Filasse naturelle pour l'étanchéité des joints de plomberie.",
+      "descLong": "La filasse naturelle est indispensable pour assurer l'étanchéité des raccords de plomberie, robinetterie et canalisations. Ses fibres souples et résistantes se compriment parfaitement dans les filetages pour prévenir toute fuite d'eau.",
+      "image": "ChatGPT Image 12 juin 2026, 16_51_10.png",
+      "featured": true
+    },
+    {
+      "id": "tuyau-pvc-souple-shoshona",
+      "name": "Tuyau PVC Souple Shoshona",
+      "gamme": "filasse-etancheite",
+      "format": "Rouleau",
+      "descShort": "Tuyau PVC souple orange pour adduction d'eau et irrigation.",
+      "descLong": "Le tuyau PVC souple Shoshona (coloris orange) est conçu pour les réseaux d'adduction d'eau, d'irrigation et les installations sanitaires légères. Sa souplesse facilite la pose dans des configurations complexes, et sa résistance à la pression garantit une longue durée de service.",
+      "image": "ChatGPT Image 12 juin 2026, 16_59_15.png",
+      "featured": false
+    },
+    {
+      "id": "tuyau-pex-al-pex-ifan",
+      "name": "Tuyau Multicouche PEX-AL-PEX IFAN Laser",
+      "gamme": "filasse-etancheite",
+      "format": "Rouleau",
+      "descShort": "Tuyau multicouche PEX-AL-PEX pour plomberie eau chaude/froide et chauffage.",
+      "descLong": "Le tuyau multicouche IFAN Laser (PEX-AL-PEX) combine la souplesse du PEX et la rigidité de l'aluminium pour des installations de plomberie sanitaire, eau chaude et chauffage au sol. Sa structure triaxiale résiste aux hautes températures et aux chocs, garantissant une installation fiable et durable.",
+      "image": "ChatGPT Image 12 juin 2026, 17_09_50.png",
+      "featured": false
+    },
+    {
+      "id": "tuyau-pvc-industriel-jaune",
+      "name": "Tuyau PVC Industriel Souple",
+      "gamme": "filasse-etancheite",
+      "format": "Rouleau",
+      "descShort": "Tuyau PVC industriel souple jaune pour usage industriel et agricole.",
+      "descLong": "Ce tuyau PVC industriel souple (coloris jaune, diamètre 20 mm, épaisseur 2,0 mm) est adapté aux applications industrielles, agricoles et de génie civil nécessitant une grande résistance à la pression et aux agents chimiques courants.",
+      "image": "ChatGPT Image 12 juin 2026, 17_49_38.png",
+      "featured": false
+    },
+    {
+      "id": "barre-armature-fer",
+      "name": "Barre d'Armature FAN",
+      "gamme": "filasse-etancheite",
+      "format": "Barre (lot)",
+      "descShort": "Barres d'armature métalliques pour béton armé et structures de construction.",
+      "descLong": "Ces barres d'armature FAN conditionnées en fagots sont destinées au renforcement des ouvrages en béton armé (dalles, poteaux, poutres, fondations). Elles offrent une excellente tenue mécanique et une bonne adhérence au béton pour des structures durables.",
+      "image": "ChatGPT Image 12 juin 2026, 17_51_15.png",
+      "featured": false
+    },
+    {
+      "id": "mortier-colle-carrelage",
+      "name": "Mortier Colle pour Carrelage",
+      "gamme": "colles-enduits",
+      "format": "Sac 25 kg",
+      "descShort": "Mortier-colle pour la pose de carrelage en intérieur et en extérieur.",
+      "descLong": "Ce mortier-colle en poudre est formulé pour la pose de carrelage céramique, grès et pierre sur sol et mur, en intérieur comme en extérieur. Sa forte adhérence et sa résistance aux variations thermiques en font le choix idéal pour les chantiers exigeants.",
+      "image": "ChatGPT Image 12 juin 2026, 16_42_35.png",
+      "featured": false
+    },
+    {
+      "id": "sdpf-ciment-colle",
+      "name": "SDPF Ciment Colle",
+      "gamme": "colles-enduits",
+      "format": "Sac 25 kg",
+      "descShort": "Ciment-colle SDPF pour carrelage intérieur et extérieur.",
+      "descLong": "Le Ciment Colle SDPF est un produit de la gamme propre de la société, adapté à la pose de carreaux céramiques et de grès sur mortier sec ou béton, en intérieur et extérieur. Sa formulation assure une excellente prise et une résistance à long terme aux sollicitations mécaniques et à l'humidité.",
+      "image": "ChatGPT Image 12 juin 2026, 16_44_13.png",
+      "featured": false
+    },
+    {
+      "id": "leclassic-ciment-colle",
+      "name": "LeCLASSIC Ciment Colle",
+      "gamme": "colles-enduits",
+      "format": "Sac 25 kg",
+      "descShort": "Ciment-colle LeCLASSIC qualité supérieure pour carrelage.",
+      "descLong": "LeCLASSIC Ciment Colle est une colle à carrelage de qualité supérieure, idéale pour la pose de carreaux en intérieur et en extérieur sur tout type de support. Sa résistance à l'eau et sa souplesse en font un produit particulièrement adapté aux zones humides (salles de bain, cuisines, terrasses).",
+      "image": "ChatGPT Image 12 juin 2026, 16_46_04.png",
+      "featured": false
+    },
+    {
+      "id": "caiman-vernis-eau",
+      "name": "Caïman Vernis à Eau",
+      "gamme": "colles-enduits",
+      "format": "Bidon 5 L / Bidon 1 L",
+      "descShort": "Vernis à eau Caïman pour la protection et la finition des surfaces bois.",
+      "descLong": "Le Vernis à Eau Caïman, fabriqué en Côte d'Ivoire, est un vernis en phase aqueuse destiné à la protection et à la mise en valeur des surfaces en bois (parquets, meubles, boiseries). Séchage rapide, faible odeur et facilité d'application en font le produit de finition de référence pour les professionnels et les particuliers.",
+      "image": "ChatGPT Image 12 juin 2026, 16_30_14.png",
+      "featured": false
+    },
+    {
+      "id": "douba-sel-iodise",
+      "name": "Sel Fin Iodisé Raffiné Douba",
+      "gamme": "colles-enduits",
+      "format": "Sac 25 kg",
+      "descShort": "Sel fin iodisé raffiné d'Égypte pour usage alimentaire et industriel.",
+      "descLong": "Le sel fin iodisé raffiné Douba (Sina and Siwa), produit d'Égypte, est commercialisé en sac de 25 kg pour les usages alimentaires collectifs et industriels. Sa pureté et son enrichissement en iode répondent aux normes de qualité internationales.",
+      "image": "ChatGPT Image 12 juin 2026, 16_41_17.png",
+      "featured": false
+    },
+    {
+      "id": "lavabo-encastre-zolux",
+      "name": "Lavabo Encastré Carré ZOLUX",
+      "gamme": "sanitaires",
+      "format": "Pièce",
+      "descShort": "Lavabo en céramique carrée à encastrer pour salle de bain moderne.",
+      "descLong": "Le lavabo encastré ZOLUX au design carré épuré est fabriqué en céramique blanche de haute qualité. Il s'intègre élégamment dans les plans de travail de salle de bain contemporains, offrant robustesse et facilité d'entretien.",
+      "image": "ChatGPT Image 12 juin 2026, 17_17_52.png",
+      "featured": false
+    },
+    {
+      "id": "wc-luxe-monobloc-zotoz",
+      "name": "WC Luxe Monobloc ZOTOZ",
+      "gamme": "sanitaires",
+      "format": "Pièce",
+      "descShort": "WC monobloc luxe en céramique blanche pour installation sanitaire haut de gamme.",
+      "descLong": "Le WC Luxe Monobloc ZOTOZ est une cuvette tout-en-un en céramique blanche de qualité supérieure, au design carré contemporain. Son réservoir intégré et son abattant inclus facilitent l'installation et l'entretien, pour un rendu élégant dans toute salle de bain ou WC indépendant.",
+      "image": "ChatGPT Image 12 juin 2026, 17_19_50.png",
+      "featured": true
+    },
+    {
+      "id": "lavabo-ordinaire-zotoz",
+      "name": "Lavabo Ordinaire ZOTOZ",
+      "gamme": "sanitaires",
+      "format": "Pièce",
+      "descShort": "Lavabo rond en céramique pour installation murale standard.",
+      "descLong": "Le lavabo ordinaire ZOTOZ en céramique blanche à vasque arrondie est conçu pour une installation murale simple et rapide. Son format compact le rend idéal pour les petites salles de bain, les WC et les espaces sanitaires collectifs.",
+      "image": "ChatGPT Image 12 juin 2026, 17_21_22.png",
+      "featured": false
+    },
+    {
+      "id": "lavabo-luxe-colonne-zotoz",
+      "name": "Lavabo Luxe sur Colonne ZOTOZ",
+      "gamme": "sanitaires",
+      "format": "Pièce (lavabo + pieds)",
+      "descShort": "Lavabo luxe sur colonne en céramique pour salle de bain élégante.",
+      "descLong": "L'ensemble Lavabo Luxe + Pieds ZOTOZ offre un support autoportant en céramique blanche, alliant style classique et praticité. La colonne dissimule les arrivées d'eau pour une installation soignée, adaptée aux salles de bain résidentielles et aux espaces hôteliers.",
+      "image": "ChatGPT Image 12 juin 2026, 17_22_58.png",
+      "featured": false
+    },
+    {
+      "id": "wc-ordinaire-totot",
+      "name": "WC Ordinaire Deux Pièces TOTOT",
+      "gamme": "sanitaires",
+      "format": "Pièce",
+      "descShort": "WC deux pièces en céramique blanche pour installation sanitaire standard.",
+      "descLong": "Le WC Ordinaire TOTOT en deux pièces (cuvette + réservoir séparé) est la solution économique et fiable pour les installations sanitaires résidentielles et commerciales. Sa conception classique facilite l'entretien et le remplacement des pièces.",
+      "image": "ChatGPT Image 12 juin 2026, 17_24_15.png",
+      "featured": false
+    },
+    {
+      "id": "wc-luxe-couleur-zotoz",
+      "name": "WC Luxe Couleur ZOTOZ",
+      "gamme": "sanitaires",
+      "format": "Pièce",
+      "descShort": "WC monobloc luxe en céramique colorée pour une salle de bain personnalisée.",
+      "descLong": "Le WC Luxe Couleur ZOTOZ se distingue par sa finition bicolore originale (rose et blanc effet marbre) sur une cuvette monobloc au design carré premium. Il permet de créer une salle de bain unique et affirmée, tout en conservant le confort et la durabilité de la céramique de qualité.",
+      "image": "ChatGPT Image 12 juin 2026, 17_26_27.png",
+      "featured": false
+    },
+    {
+      "id": "brouette-chantier-coloree",
+      "name": "Brouette de Chantier Colorée",
+      "gamme": "outillage-quincaillerie",
+      "format": "Pièce",
+      "descShort": "Brouette de chantier à bac plastique coloré pour transport de matériaux.",
+      "descLong": "Ces brouettes de chantier à bac en polyéthylène haute densité (disponibles en jaune, bleu, orange et vert) offrent légèreté et résistance pour le transport de mortier, gravats et matériaux de construction sur chantier. Leur châssis métallique robuste et leur roue gonflable assurent stabilité et maniabilité.",
+      "image": "ChatGPT Image 12 juin 2026, 16_37_24.png",
+      "extraImages": ["ChatGPT Image 12 juin 2026, 16_38_51.png"],
+      "featured": false
+    },
+    {
+      "id": "clou-beton-concrete-nail",
+      "name": "Clou Béton Concrete Nail",
+      "gamme": "outillage-quincaillerie",
+      "format": "Boîte",
+      "descShort": "Clous pour béton et maçonnerie, pour fixation sur supports durs.",
+      "descLong": "Les clous béton Concrete Nail (Made in China) sont des fixations en acier trempé destinées à l'ancrage direct dans le béton, la brique et les matériaux de maçonnerie. Leur pointe durcie permet la pose sans perçage préalable à l'aide d'un marteau.",
+      "image": "ChatGPT Image 12 juin 2026, 16_49_09.png",
+      "featured": false
+    },
+    {
+      "id": "clous-tete-plate-syo",
+      "name": "Clous Tête Plate SYO",
+      "gamme": "outillage-quincaillerie",
+      "format": "Boîte",
+      "descShort": "Clous à tête plate SYO pour charpente, menuiserie et assemblage bois.",
+      "descLong": "Les clous tête plate SYO (Toujours à la pointe de la qualité) sont des clous en acier galvanisé destinés aux travaux de charpente, menuiserie et assemblage de bois. Leur tête plate discrète permet un enfoncement affleurant pour un rendu net et professionnel.",
+      "image": "ChatGPT Image 12 juin 2026, 17_00_43.png",
+      "featured": false
+    },
+    {
+      "id": "clous-feutre-galv-kol",
+      "name": "Clous Galvanisés pour Feutre KOL",
+      "gamme": "outillage-quincaillerie",
+      "format": "Boîte 25 pièces",
+      "descShort": "Clous galvanisés pour la fixation de feutre bitumé et membrane d'étanchéité.",
+      "descLong": "Les Galv Felt Nails KOL (taille 1\", 25 pièces, Made in China) sont des clous à large tête en acier galvanisé spécialement conçus pour la fixation de feutre bitumé, membranes d'étanchéité et sous-couches de toiture. Leur galvanisation assure une bonne résistance à la corrosion.",
+      "image": "ChatGPT Image 12 juin 2026, 17_06_14.png",
+      "featured": false
+    }
+  ]
+}
