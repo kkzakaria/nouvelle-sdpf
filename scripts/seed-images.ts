@@ -57,7 +57,7 @@ for (const p of data.products) {
     // 3) lien en base
     const id = i === 0 ? p.id : `${p.id}-${i}`
     d1(
-      `INSERT INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${id}', '${p.id}', '${key}', '${esc(p.name)}', ${i});`,
+      `INSERT INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${esc(id)}', '${esc(p.id)}', '${esc(key)}', '${esc(p.name)}', ${i});`,
     )
   })
 }
