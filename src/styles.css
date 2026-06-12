@@ -115,25 +115,21 @@ body {
 .appbar {
   background: var(--head-bg);
   color: var(--head-ink);
-  padding: 28px 18px 18px;
-  padding-top: calc(28px + env(safe-area-inset-top, 0px));
+  /* Bandeau inséré (marges gauche/droite) à TOUTES les largeurs */
+  margin: 14px 16px 0;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
   position: relative;
   z-index: 4;
-  border-bottom: 1px solid color-mix(in srgb, var(--head-ink) 12%, transparent);
 }
-/* Desktop : l'appbar reprend les marges (haut + gauche/droite) de la page,
-   comme un bandeau contenu plutôt que bord à bord.
-   Placé APRÈS la règle de base pour gagner à spécificité égale. */
-@media (min-width: 1024px) {
+/* Mobile : marge haute plus généreuse pour l'encoche (barre d'état) */
+@media (max-width: 1023px) {
   .appbar {
-    padding: 16px;
-    margin: 14px 16px 0;
-    border-radius: var(--radius-lg);
-    border-bottom: none;
+    margin-top: calc(14px + env(safe-area-inset-top, 0px));
   }
 }
 
