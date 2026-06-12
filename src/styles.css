@@ -1034,15 +1034,32 @@ textarea.field {
   gap: 12px;
   padding: 14px 0;
   color: var(--ink);
+  text-decoration: none;
 }
 .contact-row + .contact-row {
   border-top: 1px solid var(--line);
 }
 .contact-row span {
   font-size: 15px;
+  line-height: 1.35;
+}
+.contact-row span b {
+  font-family: var(--title-ff);
+  font-size: 14px;
 }
 .contact-row svg {
   color: var(--accent);
+  flex-shrink: 0;
+}
+.contact-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.contact-actions .btn {
+  flex: 1;
+  min-width: 130px;
 }
 
 /* ── Pied de page (desktop) ────────────────────────────────────── */

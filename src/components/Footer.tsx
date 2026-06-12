@@ -30,8 +30,14 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
             )}
             {settings.contact_phone && (
               <div className="frow">
+                <Icon name="wa" size={18} />
+                <span>WhatsApp : {settings.contact_phone}</span>
+              </div>
+            )}
+            {settings.contact_phone_call && (
+              <div className="frow">
                 <Icon name="phone" size={18} />
-                <span>{settings.contact_phone}</span>
+                <span>Appels &amp; SMS : {settings.contact_phone_call}</span>
               </div>
             )}
             {settings.contact_email && (
