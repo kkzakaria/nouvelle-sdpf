@@ -1080,8 +1080,8 @@ textarea.field {
   }
   .dfoot .foot-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 36px;
+    grid-template-columns: 1.2fr 1.5fr 0.7fr 0.9fr;
+    gap: 32px;
   }
   .dfoot h4 {
     font-family: var(--title-ff);
@@ -1117,6 +1117,9 @@ textarea.field {
     align-items: flex-start;
     margin-bottom: 12px;
     font-size: 14px;
+  }
+  .dfoot .frow span {
+    white-space: nowrap;
   }
   .dfoot .frow svg {
     color: var(--accent);
