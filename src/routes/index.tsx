@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getCategories, getFeatured, getProducts } from '#/lib/catalog'
-import { SearchBar } from '#/components/SearchBar'
 import { CategoryCard } from '#/components/CategoryCard'
 import { ProductCard } from '#/components/ProductCard'
 import { Icon } from '#/components/Icon'
@@ -33,53 +32,78 @@ function Home() {
 
   return (
     <div className="pb-nav">
-      <section className="hero">
-        <p className="label hero-kicker">Nouvelle Société de Distribution</p>
-        <h1 className="hero-title">
-          Le plâtre &amp; la filasse,
-          <br />
-          au cœur de vos chantiers.
-        </h1>
-        <p className="hero-sub">
-          Plâtres, plaques, carreaux, filasse et accessoires de finition. Devis
-          rapide et livraison sur chantier.
-        </p>
-        <div className="hero-cta">
-          <Link to="/catalogue" className="btn btn-primary">
-            Voir le catalogue <Icon name="arrow-r" size={18} stroke={2.4} />
-          </Link>
-          <Link to="/devis" className="btn btn-ghost">
-            Devis
-          </Link>
+      <section className="dhero">
+        <div className="grid-tex" />
+        <div className="dhero-wrap">
+          <div className="dhero-copy">
+            <span className="label dhero-kicker">
+              Nouvelle Société de Distribution
+            </span>
+            <h1>
+              Le plâtre &amp; la filasse,
+              <br />
+              au cœur de vos chantiers.
+            </h1>
+            <p className="lead">
+              Distribution professionnelle de plâtres, plaques, carreaux,
+              filasse et accessoires de finition. Devis rapide et livraison sur
+              chantier.
+            </p>
+            <form
+              className="hero-search"
+              onSubmit={(e) => {
+                e.preventDefault()
+                goSearch()
+              }}
+            >
+              <Icon name="search" size={20} />
+              <input
+                placeholder="Rechercher un produit…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+            </form>
+            <div className="hero-cta">
+              <Link to="/catalogue" className="btn btn-primary btn-lg">
+                Voir le catalogue <Icon name="arrow-r" size={18} stroke={2.4} />
+              </Link>
+              <a href="#gammes" className="btn btn-ghost btn-lg">
+                Nos gammes
+              </a>
+            </div>
+          </div>
+          <div className="hero-logo">
+            <img src="/logo-sdpf.jpeg" alt="NSDPF" />
+          </div>
+        </div>
+        <div className="dhero-strip">
+          <div className="vstrip">
+            <div>
+              <Icon name="truck" size={22} />
+              <div>
+                <div className="vt">Livraison</div>
+                <div className="vs">sur chantier</div>
+              </div>
+            </div>
+            <div>
+              <Icon name="doc" size={22} />
+              <div>
+                <div className="vt">Devis</div>
+                <div className="vs">sous 24 h</div>
+              </div>
+            </div>
+            <div>
+              <Icon name="layers" size={22} />
+              <div>
+                <div className="vt">Retrait</div>
+                <div className="vs">au dépôt</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <div className="pad">
-        <SearchBar
-          value={q}
-          onChange={setQ}
-          placeholder="Rechercher un produit…"
-          onSubmit={goSearch}
-        />
-
-        <div className="perks">
-          <div className="perk">
-            <Icon name="truck" size={22} />
-            <b>Livraison</b>
-            <span className="label">sur chantier</span>
-          </div>
-          <div className="perk">
-            <Icon name="doc" size={22} />
-            <b>Devis</b>
-            <span className="label">sous 24 h</span>
-          </div>
-          <div className="perk">
-            <Icon name="pin" size={22} />
-            <b>Retrait</b>
-            <span className="label">au dépôt</span>
-          </div>
-        </div>
-
+      <div className="pad" id="gammes">
         <div className="section-head">
           <span className="sh-title">Nos gammes</span>
           <Link to="/catalogue" className="sh-link">
