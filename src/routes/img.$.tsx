@@ -6,7 +6,15 @@ export const Route = createFileRoute('/img/$')({
     handlers: {
       GET: async ({ params }) => {
         const key = params._splat
-        if (!key) return new Response('Not found', { status: 404 })
+        // Restreint aux clés publiques du catalogue (pas de traversée de chemin).
+        const ALLOWED = ['products/', 'library/']
+        if (
+          !key ||
+          key.includes('..') ||
+          !ALLOWED.some((prefix) => key.startsWith(prefix))
+        ) {
+          return new Response('Not found', { status: 404 })
+        }
         const object = await env.IMAGES.get(key)
         if (!object) return new Response('Not found', { status: 404 })
         const headers = new Headers()

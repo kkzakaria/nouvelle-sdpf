@@ -110,9 +110,9 @@ function Home() {
         <div className="cat-grid">
           {categories.map((c) => (
             <CategoryCard
-              key={c.slug}
+              key={c.id}
               category={c}
-              count={counts[c.slug] ?? 0}
+              count={counts[c.id] ?? 0}
             />
           ))}
         </div>

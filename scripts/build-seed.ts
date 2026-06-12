@@ -1,9 +1,15 @@
 /**
- * Génère migrations/0002_recatalog.sql à partir de scripts/new-catalog.json.
- * Remplace intégralement l'ancien catalogue (catégories + produits + images liées)
- * par le nouveau. Les `id` servent d'id ET de slug.
+ * Génère une migration de re-catalogue à partir de scripts/new-catalog.json,
+ * vers le prochain numéro de migration libre (sans jamais écraser une migration
+ * déjà appliquée). Remplace catégories + produits, valide les gammes, et émet
+ * un SQL transactionnel. Les `id` servent d'id ET de slug.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import {
+  readFileSync,
+  writeFileSync,
+  readdirSync,
+  existsSync,
+} from 'node:fs'
 
 type Cat = { id: string; label: string; short: string; description: string }
 type Prod = {
@@ -20,8 +26,19 @@ const data = JSON.parse(
 ) as { categories: Array<Cat>; products: Array<Prod> }
 
 const esc = (s: string) => String(s).replace(/'/g, "''")
+
+// Fail-fast : toute gamme produit doit référencer une catégorie existante.
+const catIds = new Set(data.categories.map((c) => c.id))
+const unknown = data.products.filter((p) => !catIds.has(p.gamme))
+if (unknown.length > 0) {
+  throw new Error(
+    `Gammes inconnues : ${unknown.map((p) => `${p.id} -> ${p.gamme}`).join(', ')}`,
+  )
+}
+
 const lines: Array<string> = [
   '-- re-catalogue : remplace catégories + produits (images re-liées par scripts/seed-images.ts)',
+  'BEGIN TRANSACTION;',
   'DELETE FROM product_images;',
   'DELETE FROM products;',
   'DELETE FROM categories;',
@@ -40,7 +57,19 @@ data.products.forEach((p, i) => {
   )
 })
 
-writeFileSync('migrations/0002_recatalog.sql', lines.join('\n') + '\n')
+lines.push('COMMIT;')
+
+// Prochain numéro de migration libre — ne jamais écraser une migration existante.
+const existing = readdirSync('migrations').filter((f) =>
+  /^\d{4}_.*\.sql$/.test(f),
+)
+const next =
+  Math.max(0, ...existing.map((f) => Number(f.slice(0, 4)))) + 1
+const target = `migrations/${String(next).padStart(4, '0')}_recatalog.sql`
+if (existsSync(target)) {
+  throw new Error(`La migration ${target} existe déjà — refus d'écraser.`)
+}
+writeFileSync(target, lines.join('\n') + '\n')
 console.log(
-  `Écrit migrations/0002_recatalog.sql (${data.categories.length} gammes, ${data.products.length} produits)`,
+  `Écrit ${target} (${data.categories.length} gammes, ${data.products.length} produits)`,
 )

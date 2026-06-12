@@ -4,8 +4,9 @@
  * Identifiants temporaires — à changer après la première connexion.
  */
 // Defaults for local dev — override via env vars.
-// BETTER_AUTH_URL is typed as a Worker binding (always string); EMAIL/PASSWORD are optional.
-const BASE = process.env.BETTER_AUTH_URL
+// Cast: typé `string` via les bindings Worker, mais possiblement absent au runtime du script.
+const BASE =
+  (process.env.BETTER_AUTH_URL as string | undefined) ?? 'http://localhost:3000'
 const EMAIL = process.env.ADMIN_EMAIL ?? 'admin@nsdpf.local'
 const PASSWORD = process.env.ADMIN_PASSWORD ?? 'ChangeMoi!2026'
 
@@ -22,10 +23,10 @@ async function main() {
   const body = await res.text()
 
   if (res.ok) {
+    console.log(`Compte admin créé : ${EMAIL}`)
     console.log(
-      `Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`,
+      '⚠️  Mot de passe : voir ADMIN_PASSWORD (ou la valeur par défaut du script). À changer après la première connexion.',
     )
-    console.log('⚠️  Changez ce mot de passe après la première connexion.')
     return
   }
 

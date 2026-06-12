@@ -40,7 +40,7 @@ function DevisPage() {
     buildDevisMessage(lines, { name, phone, note }),
   )
 
-  if (ids.length === 0) {
+  if (lines.length === 0) {
     return (
       <div className="pb-nav">
         <div className="appbar">
@@ -78,7 +78,7 @@ function DevisPage() {
           }}
         >
           <span className="label" style={{ color: 'var(--muted)' }}>
-            {ids.length} produit{ids.length > 1 ? 's' : ''}
+            {lines.length} produit{lines.length > 1 ? 's' : ''}
           </span>
           <span
             className="sh-link"
