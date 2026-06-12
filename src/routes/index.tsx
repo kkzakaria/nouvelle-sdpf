@@ -72,9 +72,6 @@ function Home() {
               </a>
             </div>
           </div>
-          <div className="hero-logo">
-            <img src="/logo-nsdpf.png" alt="NSDPF" />
-          </div>
         </div>
         <div className="dhero-strip">
           <div className="vstrip">
