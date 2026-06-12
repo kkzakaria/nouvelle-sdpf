@@ -11,3 +11,6 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# Source asset archives (extracted, not versioned)
+*.zip
