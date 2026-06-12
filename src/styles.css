@@ -147,8 +147,8 @@ body {
 .logo-chip img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transform: scale(1.18);
+  object-fit: contain;
+  padding: 3px;
   display: block;
 }
 
@@ -807,7 +807,8 @@ textarea.field {
 .dhero .hero-logo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 28px;
 }
 .dhero-strip {
   position: relative;
@@ -1050,7 +1051,8 @@ textarea.field {
   .dfoot .foot-logo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 6px;
   }
   .dfoot .foot-about {
     font-size: 14px;

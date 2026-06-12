@@ -73,7 +73,7 @@ function Home() {
             </div>
           </div>
           <div className="hero-logo">
-            <img src="/logo-sdpf.jpeg" alt="NSDPF" />
+            <img src="/logo-nsdpf.png" alt="NSDPF" />
           </div>
         </div>
         <div className="dhero-strip">

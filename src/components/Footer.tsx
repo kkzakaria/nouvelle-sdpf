@@ -11,7 +11,7 @@ export function Footer({ settings }: { settings: Record<string, string> }) {
         <div className="foot-grid">
           <div>
             <div className="foot-logo">
-              <img src="/logo-sdpf.jpeg" alt="NSDPF" />
+              <img src="/logo-nsdpf.png" alt="NSDPF" />
             </div>
             <p className="foot-about">
               Nouvelle Société de Distribution de Plâtre et Filasses. Votre
