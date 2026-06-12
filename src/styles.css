@@ -664,7 +664,11 @@ textarea.field {
     font-family: var(--label-ff);
     font-size: 9px;
     color: var(--muted);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    max-width: 230px;
+    line-height: 1.3;
+    margin-top: 3px;
   }
   .topnav-links {
     display: flex;

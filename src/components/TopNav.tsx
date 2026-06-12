@@ -11,7 +11,8 @@ export function TopNav({ whatsapp }: { whatsapp: string }) {
         <Link to="/" className="topnav-brand">
           <LogoChip />
           <span className="topnav-name">
-            NSDPF<small>PLÂTRE &amp; FILASSE</small>
+            NSDPF
+            <small>Nouvelle Société de Distribution de Plâtre et Filasses</small>
           </span>
         </Link>
         <nav className="topnav-links">
