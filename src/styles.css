@@ -384,15 +384,23 @@ body {
 
 /* ── Product card ──────────────────────────────────────────────── */
 .pcard {
-  cursor: pointer;
+  position: relative;
   display: flex;
   flex-direction: column;
 }
-.pcard .pc-body {
-  padding: 11px 12px 12px;
+.pcard-link {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.pcard .pc-body {
+  padding: 11px 52px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   flex: 1;
 }
 .pcard .pc-name {
@@ -417,6 +425,9 @@ body {
 
 /* ── Round add button ──────────────────────────────────────────── */
 .add-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
   width: 34px;
   height: 34px;
   border-radius: 999px;

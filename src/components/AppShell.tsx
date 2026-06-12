@@ -1,12 +1,13 @@
 import { TopNav } from './TopNav'
 import { BottomNav } from './BottomNav'
 import { Footer } from './Footer'
+import type { SiteSettings } from '#/lib/catalog'
 
 export function AppShell({
   settings,
   children,
 }: {
-  settings: Record<string, string>
+  settings: SiteSettings
   children: React.ReactNode
 }) {
   return (

@@ -71,9 +71,27 @@ export const getProductBySlug = createServerFn({ method: 'GET' })
     return { ...p, images: imgs.map((i) => ({ key: i.r2Key, alt: i.alt })) }
   })
 
+export type SiteSettings = {
+  whatsapp_number: string
+  contact_phone: string
+  contact_phone_call: string
+  contact_email: string
+  contact_address: string
+}
+
+const SETTINGS_DEFAULTS: SiteSettings = {
+  whatsapp_number: '',
+  contact_phone: '',
+  contact_phone_call: '',
+  contact_email: '',
+  contact_address: '',
+}
+
+/** Paramètres du site avec toutes les clés garanties (défauts vides). */
 export const getSettings = createServerFn({ method: 'GET' }).handler(
-  async () => {
+  async (): Promise<SiteSettings> => {
     const rows = await db.select().from(settings)
-    return Object.fromEntries(rows.map((r) => [r.key, r.value]))
+    const map = Object.fromEntries(rows.map((r) => [r.key, r.value]))
+    return { ...SETTINGS_DEFAULTS, ...map }
   },
 )

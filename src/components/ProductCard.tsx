@@ -12,29 +12,22 @@ export function ProductCard({ product }: { product: ProductDTO }) {
       <Link
         to="/produit/$slug"
         params={{ slug: product.slug }}
-        style={{ textDecoration: 'none', color: 'inherit' }}
+        className="pcard-link"
       >
         <Photo image={product.images[0]} alt={product.name} height={180} />
         <div className="pc-body">
           <div className="pc-name">{product.name}</div>
           <div className="pc-desc">{product.format}</div>
-          <div className="pc-foot">
-            <span className="chip">{product.format}</span>
-            <button
-              className="add-btn"
-              data-in={inDevis ? 'true' : 'false'}
-              aria-label="Ajouter au devis"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                toggle(product.id)
-              }}
-            >
-              <Icon name={inDevis ? 'check' : 'plus'} size={18} stroke={2.6} />
-            </button>
-          </div>
         </div>
       </Link>
+      <button
+        className="add-btn"
+        data-in={inDevis ? 'true' : 'false'}
+        aria-label={inDevis ? 'Retirer du devis' : 'Ajouter au devis'}
+        onClick={() => toggle(product.id)}
+      >
+        <Icon name={inDevis ? 'check' : 'plus'} size={18} stroke={2.6} />
+      </button>
     </div>
   )
 }

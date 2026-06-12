@@ -43,6 +43,8 @@ const esc = (s: string) => s.replace(/'/g, "''")
 
 for (const p of data.products) {
   const files = [p.image, ...(p.extraImages ?? [])]
+  // Idempotent : on repart d'un état propre pour ce produit à chaque exécution.
+  d1(`DELETE FROM product_images WHERE product_id = '${esc(p.id)}';`)
   files.forEach((file, i) => {
     const ext = (file.split('.').pop() || 'png').toLowerCase()
     const slugName = i === 0 ? `${p.id}.${ext}` : `${p.id}-${i}.${ext}`
@@ -55,7 +57,7 @@ for (const p of data.products) {
     // 3) lien en base
     const id = i === 0 ? p.id : `${p.id}-${i}`
     d1(
-      `INSERT OR IGNORE INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${id}', '${p.id}', '${key}', '${esc(p.name)}', ${i});`,
+      `INSERT INTO product_images (id, product_id, r2_key, alt, sort_order) VALUES ('${id}', '${p.id}', '${key}', '${esc(p.name)}', ${i});`,
     )
   })
 }

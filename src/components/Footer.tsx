@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { Icon } from './Icon'
 import { buildWaUrl } from '#/lib/wa'
+import type { SiteSettings } from '#/lib/catalog'
 
-export function Footer({ settings }: { settings: Record<string, string> }) {
+export function Footer({ settings }: { settings: SiteSettings }) {
   const wa = settings.whatsapp_number
   const year = new Date().getFullYear()
   return (
