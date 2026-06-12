@@ -4,35 +4,65 @@ import { db } from '#/db/index'
 import { categories, products, productImages, settings } from '#/db/schema'
 
 export type CategoryDTO = typeof categories.$inferSelect
-export type ProductDTO = typeof products.$inferSelect & { images: Array<{ key: string; alt: string }> }
+export type ProductDTO = typeof products.$inferSelect & {
+  images: Array<{ key: string; alt: string }>
+}
 
-export const getCategories = createServerFn({ method: 'GET' }).handler(async () => {
-  return db.select().from(categories).orderBy(asc(categories.sortOrder))
-})
+export const getCategories = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    return db.select().from(categories).orderBy(asc(categories.sortOrder))
+  },
+)
 
-export const getProducts = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(products).orderBy(asc(products.sortOrder))
-  const imgs = await db.select().from(productImages).orderBy(asc(productImages.sortOrder))
-  return rows.map((p) => ({
-    ...p,
-    images: imgs.filter((i) => i.productId === p.id).map((i) => ({ key: i.r2Key, alt: i.alt })),
-  }))
-})
+export const getProducts = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db
+      .select()
+      .from(products)
+      .orderBy(asc(products.sortOrder))
+    const imgs = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sortOrder))
+    return rows.map((p) => ({
+      ...p,
+      images: imgs
+        .filter((i) => i.productId === p.id)
+        .map((i) => ({ key: i.r2Key, alt: i.alt })),
+    }))
+  },
+)
 
-export const getFeatured = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(products).where(eq(products.featured, true)).orderBy(asc(products.sortOrder))
-  const imgs = await db.select().from(productImages).orderBy(asc(productImages.sortOrder))
-  return rows.map((p) => ({
-    ...p,
-    images: imgs.filter((i) => i.productId === p.id).map((i) => ({ key: i.r2Key, alt: i.alt })),
-  }))
-})
+export const getFeatured = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db
+      .select()
+      .from(products)
+      .where(eq(products.featured, true))
+      .orderBy(asc(products.sortOrder))
+    const imgs = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sortOrder))
+    return rows.map((p) => ({
+      ...p,
+      images: imgs
+        .filter((i) => i.productId === p.id)
+        .map((i) => ({ key: i.r2Key, alt: i.alt })),
+    }))
+  },
+)
 
 export const getProductBySlug = createServerFn({ method: 'GET' })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
-    const [p] = await db.select().from(products).where(eq(products.slug, slug)).limit(1)
-    if (!p) return null
+    const rows = await db
+      .select()
+      .from(products)
+      .where(eq(products.slug, slug))
+      .limit(1)
+    if (rows.length === 0) return null
+    const p = rows[0]
     const imgs = await db
       .select()
       .from(productImages)
@@ -41,7 +71,9 @@ export const getProductBySlug = createServerFn({ method: 'GET' })
     return { ...p, images: imgs.map((i) => ({ key: i.r2Key, alt: i.alt })) }
   })
 
-export const getSettings = createServerFn({ method: 'GET' }).handler(async () => {
-  const rows = await db.select().from(settings)
-  return Object.fromEntries(rows.map((r) => [r.key, r.value])) as Record<string, string>
-})
+export const getSettings = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const rows = await db.select().from(settings)
+    return Object.fromEntries(rows.map((r) => [r.key, r.value]))
+  },
+)

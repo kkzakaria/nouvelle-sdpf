@@ -8,8 +8,11 @@ import { buildWaUrl, buildDevisMessage } from '#/lib/wa'
 
 export const Route = createFileRoute('/devis')({
   loader: async () => {
-    const [products, settings] = await Promise.all([getProducts(), getSettings()])
-    return { products, whatsapp: settings.whatsapp_number ?? '' }
+    const [products, settings] = await Promise.all([
+      getProducts(),
+      getSettings(),
+    ])
+    return { products, whatsapp: settings.whatsapp_number }
   },
   component: DevisPage,
 })
@@ -25,9 +28,17 @@ function DevisPage() {
   const lines = ids
     .map((id) => products.find((p) => p.id === id))
     .filter((p): p is NonNullable<typeof p> => !!p)
-    .map((p) => ({ id: p.id, name: p.name, format: p.format, qty: devis[p.id] }))
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      format: p.format,
+      qty: devis[p.id],
+    }))
 
-  const waUrl = buildWaUrl(whatsapp, buildDevisMessage(lines, { name, phone, note }))
+  const waUrl = buildWaUrl(
+    whatsapp,
+    buildDevisMessage(lines, { name, phone, note }),
+  )
 
   if (ids.length === 0) {
     return (
@@ -41,7 +52,8 @@ function DevisPage() {
           </div>
           <div className="empty-title">Votre devis est vide</div>
           <p style={{ maxWidth: 240, margin: '0 auto 20px' }}>
-            Ajoutez des produits depuis le catalogue pour préparer votre demande.
+            Ajoutez des produits depuis le catalogue pour préparer votre
+            demande.
           </p>
           <Link to="/catalogue" className="btn btn-primary">
             Parcourir le catalogue
@@ -68,7 +80,11 @@ function DevisPage() {
           <span className="label" style={{ color: 'var(--muted)' }}>
             {ids.length} produit{ids.length > 1 ? 's' : ''}
           </span>
-          <span className="sh-link" style={{ cursor: 'pointer' }} onClick={clear}>
+          <span
+            className="sh-link"
+            style={{ cursor: 'pointer' }}
+            onClick={clear}
+          >
             Vider
           </span>
         </div>

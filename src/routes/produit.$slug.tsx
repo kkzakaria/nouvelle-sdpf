@@ -14,7 +14,7 @@ export const Route = createFileRoute('/produit/$slug')({
     const related = all
       .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
       .slice(0, 4)
-    return { product, related, whatsapp: settings.whatsapp_number ?? '' }
+    return { product, related, whatsapp: settings.whatsapp_number }
   },
   component: Detail,
 })
@@ -41,15 +41,29 @@ function Detail() {
         <h1 className="detail-title">{product.name}</h1>
         <p className="detail-desc">{product.descLong}</p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            marginTop: 22,
+          }}
+        >
           <button
-            className={'btn btn-block btn-lg ' + (inDevis ? 'btn-brand' : 'btn-primary')}
+            className={
+              'btn btn-block btn-lg ' + (inDevis ? 'btn-brand' : 'btn-primary')
+            }
             onClick={() => toggle(product.id)}
           >
             <Icon name={inDevis ? 'check' : 'plus'} size={20} stroke={2.4} />
             {inDevis ? 'Ajouté au devis' : 'Ajouter au devis'}
           </button>
-          <a className="btn btn-wa btn-block btn-lg" href={waUrl} target="_blank" rel="noopener">
+          <a
+            className="btn btn-wa btn-block btn-lg"
+            href={waUrl}
+            target="_blank"
+            rel="noopener"
+          >
             <Icon name="wa" size={20} /> Commander via WhatsApp
           </a>
         </div>

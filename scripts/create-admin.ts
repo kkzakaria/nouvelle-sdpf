@@ -3,7 +3,9 @@
  * Prérequis : `bun run dev` doit tourner sur http://localhost:3000.
  * Identifiants temporaires — à changer après la première connexion.
  */
-const BASE = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
+// Defaults for local dev — override via env vars.
+// BETTER_AUTH_URL is typed as a Worker binding (always string); EMAIL/PASSWORD are optional.
+const BASE = process.env.BETTER_AUTH_URL
 const EMAIL = process.env.ADMIN_EMAIL ?? 'admin@nsdpf.local'
 const PASSWORD = process.env.ADMIN_PASSWORD ?? 'ChangeMoi!2026'
 
@@ -11,12 +13,18 @@ async function main() {
   const res = await fetch(`${BASE}/api/auth/sign-up/email`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Origin: BASE },
-    body: JSON.stringify({ name: 'Admin NSDPF', email: EMAIL, password: PASSWORD }),
+    body: JSON.stringify({
+      name: 'Admin NSDPF',
+      email: EMAIL,
+      password: PASSWORD,
+    }),
   })
   const body = await res.text()
 
   if (res.ok) {
-    console.log(`Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`)
+    console.log(
+      `Compte admin créé : ${EMAIL} (mot de passe temporaire : ${PASSWORD})`,
+    )
     console.log('⚠️  Changez ce mot de passe après la première connexion.')
     return
   }

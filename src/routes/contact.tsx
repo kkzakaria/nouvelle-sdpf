@@ -10,7 +10,7 @@ export const Route = createFileRoute('/contact')({
 
 function Contact() {
   const { settings } = Route.useLoaderData()
-  const wa = settings.whatsapp_number ?? ''
+  const wa = settings.whatsapp_number
   return (
     <div className="pb-nav">
       <div className="appbar">
@@ -20,15 +20,15 @@ function Contact() {
         <div className="card contact-card">
           <div className="contact-row">
             <Icon name="phone" size={20} />
-            <span>{settings.contact_phone ?? ''}</span>
+            <span>{settings.contact_phone}</span>
           </div>
           <div className="contact-row">
             <Icon name="doc" size={20} />
-            <span>{settings.contact_email ?? ''}</span>
+            <span>{settings.contact_email}</span>
           </div>
           <div className="contact-row">
             <Icon name="pin" size={20} />
-            <span>{settings.contact_address ?? ''}</span>
+            <span>{settings.contact_address}</span>
           </div>
         </div>
         <a
