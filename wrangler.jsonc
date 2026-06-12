@@ -9,16 +9,22 @@
       "binding": "DB",
       "database_name": "nsdpf-db",
       "database_id": "66c9ab48-646f-43ce-903f-5fea6992286f",
-      "migrations_dir": "migrations"
-    }
+      "migrations_dir": "migrations",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "IMAGES",
-      "bucket_name": "nsdpf-images"
-    }
+      "bucket_name": "nsdpf-images",
+    },
   ],
   "vars": {
-    "BETTER_AUTH_URL": "http://localhost:3000"
-  }
+    "BETTER_AUTH_URL": "https://nouvelle-sdpf.ci",
+  },
+  "routes": [
+    {
+      "pattern": "nouvelle-sdpf.ci",
+      "custom_domain": true,
+    },
+  ],
 }
