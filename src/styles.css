@@ -668,7 +668,7 @@ textarea.field {
   }
   .topnav-links {
     display: flex;
-    gap: 18px;
+    gap: 6px;
     margin-left: auto;
   }
   .topnav-links a {
@@ -677,6 +677,20 @@ textarea.field {
     font-family: var(--title-ff);
     font-weight: 600;
     font-size: 14px;
+    padding: 8px 14px;
+    border-radius: var(--chip-r);
+    transition:
+      background 0.14s ease,
+      color 0.14s ease;
+  }
+  .topnav-links a:hover {
+    background: var(--surface-2);
+    color: var(--accent);
+  }
+  /* Indicateur de page active */
+  .topnav-links a.is-active {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
   }
   .topnav-actions {
     display: flex;

@@ -15,9 +15,15 @@ export function TopNav({ whatsapp }: { whatsapp: string }) {
           </span>
         </Link>
         <nav className="topnav-links">
-          <Link to="/">Accueil</Link>
-          <Link to="/catalogue">Catalogue</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: 'is-active' }}>
+            Accueil
+          </Link>
+          <Link to="/catalogue" activeProps={{ className: 'is-active' }}>
+            Catalogue
+          </Link>
+          <Link to="/contact" activeProps={{ className: 'is-active' }}>
+            Contact
+          </Link>
         </nav>
         <div className="topnav-actions">
           <a
