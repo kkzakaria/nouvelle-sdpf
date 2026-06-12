@@ -546,3 +546,31 @@ textarea.field { resize: none; }
   .cat-grid { grid-template-columns: repeat(4, 1fr); }
   .pgrid { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ── Product detail ────────────────────────────────────────────── */
+.detail-media { position: relative; }
+.detail-back { position: absolute; top: 14px; left: 14px; z-index: 12; width: 42px; height: 42px; border-radius: 999px; border: 0; cursor: pointer; background: color-mix(in srgb, var(--surface) 85%, transparent); backdrop-filter: blur(10px); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; color: var(--ink); }
+.detail-body { background: var(--bg); border-top-left-radius: 22px; border-top-right-radius: 22px; margin-top: -18px; position: relative; }
+.detail-title { font-family: var(--title-ff); font-weight: 800; font-size: 24px; line-height: 1.1; margin: 10px 0 8px; }
+.detail-desc { color: var(--muted); line-height: 1.5; }
+.related-row { display: flex; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 6px; scrollbar-width: none; }
+.related-card { width: 150px; flex-shrink: 0; }
+
+@media (min-width: 1024px) {
+  .detail-media .photo { border-radius: var(--radius-lg); }
+}
+
+/* ── Devis page ────────────────────────────────────────────────── */
+.devis-list { display: flex; flex-direction: column; gap: 10px; }
+.devis-row { display: flex; align-items: center; gap: 12px; padding: 12px; }
+.devis-info { flex: 1; min-width: 0; }
+.devis-del { appearance: none; border: 0; background: none; cursor: pointer; color: var(--muted); padding: 4px; }
+.devis-form { margin-top: 18px; }
+.empty-title { font-family: var(--title-ff); font-weight: 700; font-size: 18px; color: var(--ink); margin-bottom: 6px; }
+
+/* ── Contact page ──────────────────────────────────────────────── */
+.contact-card { padding: 6px 16px; }
+.contact-row { display: flex; align-items: center; gap: 12px; padding: 14px 0; color: var(--ink); }
+.contact-row + .contact-row { border-top: 1px solid var(--line); }
+.contact-row span { font-size: 15px; }
+.contact-row svg { color: var(--accent); }
