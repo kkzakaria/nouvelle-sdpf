@@ -1,25 +1,25 @@
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn, createServerOnlyFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '#/lib/auth'
 
 /**
- * À appeler en tête de chaque mutation admin : revalide la session côté
- * serveur. Lève une erreur si aucune session valide n'est présente.
+ * Lecture de session isolée côté serveur via createServerOnlyFn : ni cette
+ * fonction ni ses imports serveur (auth → cloudflare:workers, getRequest →
+ * node:async_hooks) n'entrent dans le bundle client.
  */
+const readSession = createServerOnlyFn(() =>
+  auth.api.getSession({ headers: getRequest().headers }),
+)
+
 export async function requireAdmin() {
-  const session = await auth.api.getSession({
-    headers: getRequest().headers,
-  })
+  const session = await readSession()
   if (!session) throw new Error('UNAUTHORIZED')
   return session
 }
 
-/** Lue par le garde de route `beforeLoad`. Renvoie l'e-mail ou null. */
 export const getAdminSession = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const session = await auth.api.getSession({
-      headers: getRequest().headers,
-    })
+    const session = await readSession()
     return session ? { email: session.user.email } : null
   },
 )
