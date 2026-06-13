@@ -1168,18 +1168,18 @@ textarea.field {
 /* ---------- Admin back-office ---------- */
 .admin { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; background: #f4f6f8; }
 .admin-side { display: flex; flex-direction: column; gap: 18px; padding: 22px 16px; background: #0f2740; color: #fff; }
-.admin-brand { font-family: 'Archivo', sans-serif; font-weight: 800; letter-spacing: 0.02em; }
+.admin-brand { font-family: Archivo, sans-serif; font-weight: 800; letter-spacing: 0.02em; }
 .admin-nav { display: flex; flex-direction: column; gap: 4px; }
 .admin-nav a { color: #cdd9e5; text-decoration: none; padding: 9px 12px; border-radius: 8px; font-weight: 600; }
 .admin-nav a:hover { background: rgba(255, 255, 255, 0.08); }
 .admin-nav a.is-active { background: #1e73ad; color: #fff; }
 .admin-logout { margin-top: auto; background: rgba(255, 255, 255, 0.1); color: #fff; }
 .admin-main { padding: 28px clamp(16px, 4vw, 40px); max-width: 1000px; }
-.admin-h1 { font-family: 'Archivo', sans-serif; margin: 0 0 20px; }
+.admin-h1 { font-family: Archivo, sans-serif; margin: 0 0 20px; }
 .admin-card { background: #fff; border: 1px solid #e3e8ee; border-radius: 12px; padding: 18px; }
 .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
 .admin-stat { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
-.admin-stat-n { font-size: 34px; font-weight: 800; font-family: 'Archivo', sans-serif; color: #1e73ad; }
+.admin-stat-n { font-size: 34px; font-weight: 800; font-family: Archivo, sans-serif; color: #1e73ad; }
 .admin-stat-l { color: #5a6b7b; font-weight: 600; }
 .admin-login { display: grid; place-items: center; min-height: 100vh; background: #0f2740; padding: 20px; }
 .admin-login-card { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px; }

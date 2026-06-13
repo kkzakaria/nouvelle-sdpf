@@ -44,23 +44,27 @@ export const adminUploadImage = createServerFn({ method: 'POST' })
     await env.IMAGES.put(key, await file.arrayBuffer(), {
       httpMetadata: { contentType: file.type },
     })
-
-    const existing = await db
-      .select({ sortOrder: productImages.sortOrder })
-      .from(productImages)
-      .where(eq(productImages.productId, productId))
-      .orderBy(asc(productImages.sortOrder))
-    const nextOrder = existing.length
-      ? Math.max(...existing.map((r) => r.sortOrder)) + 1
-      : 0
-
-    await db.insert(productImages).values({
-      id,
-      productId,
-      r2Key: key,
-      alt: '',
-      sortOrder: nextOrder,
-    })
+    try {
+      const existing = await db
+        .select({ sortOrder: productImages.sortOrder })
+        .from(productImages)
+        .where(eq(productImages.productId, productId))
+        .orderBy(asc(productImages.sortOrder))
+      const nextOrder = existing.length
+        ? Math.max(...existing.map((r) => r.sortOrder)) + 1
+        : 0
+      await db.insert(productImages).values({
+        id,
+        productId,
+        r2Key: key,
+        alt: '',
+        sortOrder: nextOrder,
+      })
+    } catch (err) {
+      // Compense l'objet R2 déjà écrit pour éviter un blob orphelin.
+      await env.IMAGES.delete(key)
+      throw err
+    }
     return { id, key }
   })
 
@@ -74,22 +78,45 @@ export const adminDeleteImage = createServerFn({ method: 'POST' })
       .where(eq(productImages.id, data.id))
       .limit(1)
     if (rows.length === 0) return { ok: true }
-    await env.IMAGES.delete(rows[0].key)
     await db.delete(productImages).where(eq(productImages.id, data.id))
+    try {
+      await env.IMAGES.delete(rows[0].key)
+    } catch {
+      // objet orphelin toléré
+    }
     return { ok: true }
   })
 
 export const adminReorderImages = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) =>
-    z.object({ orderedIds: z.array(z.string().min(1)) }).parse(d),
+    z
+      .object({
+        productId: z.string().min(1),
+        orderedIds: z.array(z.string().min(1)),
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
     await requireAdmin()
-    for (let i = 0; i < data.orderedIds.length; i++) {
-      await db
+    const current = await db
+      .select({ id: productImages.id })
+      .from(productImages)
+      .where(eq(productImages.productId, data.productId))
+    const currentSet = new Set(current.map((r) => r.id))
+    const payloadSet = new Set(data.orderedIds)
+    const exact =
+      data.orderedIds.length === current.length &&
+      currentSet.size === payloadSet.size &&
+      [...payloadSet].every((id) => currentSet.has(id))
+    if (!exact) throw new Error('REORDER_SET_MISMATCH')
+    const updates = data.orderedIds.map((id, i) =>
+      db
         .update(productImages)
         .set({ sortOrder: i })
-        .where(eq(productImages.id, data.orderedIds[i]))
+        .where(eq(productImages.id, id)),
+    )
+    if (updates.length > 0) {
+      await db.batch([updates[0], ...updates.slice(1)])
     }
     return { ok: true }
   })

@@ -23,6 +23,7 @@ import { Route as AdminAuthedProduitsRouteImport } from './routes/admin/_authed/
 import { Route as AdminAuthedParametresRouteImport } from './routes/admin/_authed/parametres'
 import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
 import { Route as AdminAuthedProduitsIndexRouteImport } from './routes/admin/_authed/produits.index'
+import { Route as AdminAuthedProduitsNouveauRouteImport } from './routes/admin/_authed/produits.nouveau'
 import { Route as AdminAuthedProduitsIdRouteImport } from './routes/admin/_authed/produits.$id'
 
 const DevisRoute = DevisRouteImport.update({
@@ -96,6 +97,12 @@ const AdminAuthedProduitsIndexRoute =
     path: '/',
     getParentRoute: () => AdminAuthedProduitsRoute,
   } as any)
+const AdminAuthedProduitsNouveauRoute =
+  AdminAuthedProduitsNouveauRouteImport.update({
+    id: '/nouveau',
+    path: '/nouveau',
+    getParentRoute: () => AdminAuthedProduitsRoute,
+  } as any)
 const AdminAuthedProduitsIdRoute = AdminAuthedProduitsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof AdminAuthedIndexRoute
   '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
   '/admin/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -132,6 +140,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof AdminAuthedIndexRoute
   '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
   '/admin/produits': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesById {
@@ -150,6 +159,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
   '/admin/_authed/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/_authed/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
   '/admin/_authed/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRouteTypes {
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/admin/'
     | '/admin/produits/$id'
+    | '/admin/produits/nouveau'
     | '/admin/produits/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/admin'
     | '/admin/produits/$id'
+    | '/admin/produits/nouveau'
     | '/admin/produits'
   id:
     | '__root__'
@@ -201,6 +213,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/admin/_authed/'
     | '/admin/_authed/produits/$id'
+    | '/admin/_authed/produits/nouveau'
     | '/admin/_authed/produits/'
   fileRoutesById: FileRoutesById
 }
@@ -316,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedProduitsIndexRouteImport
       parentRoute: typeof AdminAuthedProduitsRoute
     }
+    '/admin/_authed/produits/nouveau': {
+      id: '/admin/_authed/produits/nouveau'
+      path: '/nouveau'
+      fullPath: '/admin/produits/nouveau'
+      preLoaderRoute: typeof AdminAuthedProduitsNouveauRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
     '/admin/_authed/produits/$id': {
       id: '/admin/_authed/produits/$id'
       path: '/$id'
@@ -328,11 +348,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminAuthedProduitsRouteChildren {
   AdminAuthedProduitsIdRoute: typeof AdminAuthedProduitsIdRoute
+  AdminAuthedProduitsNouveauRoute: typeof AdminAuthedProduitsNouveauRoute
   AdminAuthedProduitsIndexRoute: typeof AdminAuthedProduitsIndexRoute
 }
 
 const AdminAuthedProduitsRouteChildren: AdminAuthedProduitsRouteChildren = {
   AdminAuthedProduitsIdRoute: AdminAuthedProduitsIdRoute,
+  AdminAuthedProduitsNouveauRoute: AdminAuthedProduitsNouveauRoute,
   AdminAuthedProduitsIndexRoute: AdminAuthedProduitsIndexRoute,
 }
 

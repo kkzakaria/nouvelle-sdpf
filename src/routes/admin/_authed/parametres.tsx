@@ -46,7 +46,7 @@ function Settings() {
       await router.invalidate()
       setSaved(true)
     } catch {
-      setError('Échec de l’enregistrement.')
+      setError("Échec de l’enregistrement.")
     }
   }
 
@@ -59,9 +59,10 @@ function Settings() {
             <span>{field.label}</span>
             <input
               value={form[field.key]}
-              onChange={(e) =>
+              onChange={(e) => {
+                setSaved(false)
                 setForm({ ...form, [field.key]: e.target.value })
-              }
+              }}
             />
           </label>
         ))}

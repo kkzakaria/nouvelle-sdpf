@@ -12,14 +12,18 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
   const root = slugify(base)
   let candidate = root
   let i = 2
+  const RESERVED = new Set(['nouveau'])
   // Boucle bornée par la taille du catalogue ; sort dès qu'un slug est libre.
   for (;;) {
-    const rows = await db
-      .select({ id: products.id })
-      .from(products)
-      .where(eq(products.slug, candidate))
-      .limit(1)
-    if (rows.length === 0 || rows[0].id === excludeId) return candidate
+    const taken = RESERVED.has(candidate)
+    const rows = taken
+      ? [{ id: '__reserved__' }]
+      : await db
+          .select({ id: products.id })
+          .from(products)
+          .where(eq(products.slug, candidate))
+          .limit(1)
+    if (!taken && (rows.length === 0 || rows[0].id === excludeId)) return candidate
     candidate = `${root}-${i++}`
   }
 }
@@ -113,13 +117,20 @@ export const adminDeleteProduct = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({ id: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
     await requireAdmin()
-    // product_images est supprimé en cascade (FK). On retire d'abord les objets R2.
     const imgs = await db
       .select({ key: productImages.r2Key })
       .from(productImages)
       .where(eq(productImages.productId, data.id))
-    const { env } = await import('cloudflare:workers')
-    for (const im of imgs) await env.IMAGES.delete(im.key)
+    // D'abord la base (cohérente, cascade product_images), puis best-effort R2 :
+    // un échec R2 laisse au pire un objet orphelin, jamais un produit non supprimable.
     await db.delete(products).where(eq(products.id, data.id))
+    const { env } = await import('cloudflare:workers')
+    for (const im of imgs) {
+      try {
+        await env.IMAGES.delete(im.key)
+      } catch {
+        // objet orphelin toléré ; la cohérence DB prime
+      }
+    }
     return { ok: true }
   })

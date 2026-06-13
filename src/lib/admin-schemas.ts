@@ -5,10 +5,15 @@ const slugRule = z
   .trim()
   .regex(/^[a-z0-9-]+$/, 'Slug invalide (a-z, 0-9, tirets)')
 
+const optionalSlug = z.preprocess(
+  (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
+  slugRule.optional(),
+)
+
 export const productInput = z.object({
   name: z.string().trim().min(1, 'Nom requis').max(120),
   categoryId: z.string().trim().min(1, 'Catégorie requise'),
-  slug: slugRule.optional(),
+  slug: optionalSlug,
   format: z.string().trim().max(120).default(''),
   descShort: z.string().trim().max(400).default(''),
   descLong: z.string().trim().max(4000).default(''),
@@ -25,7 +30,7 @@ export type ProductUpdate = z.infer<typeof productUpdate>
 export const categoryInput = z.object({
   label: z.string().trim().min(1, 'Libellé requis').max(80),
   short: z.string().trim().min(1, 'Sous-titre requis').max(120),
-  slug: slugRule.optional(),
+  slug: optionalSlug,
   description: z.string().trim().max(2000).default(''),
   sortOrder: z.number().int().default(0),
 })

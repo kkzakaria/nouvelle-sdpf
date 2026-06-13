@@ -17,13 +17,18 @@ function Login() {
     e.preventDefault()
     setBusy(true)
     setError('')
-    const { error: err } = await authClient.signIn.email({ email, password })
-    setBusy(false)
-    if (err) {
-      setError('Identifiants invalides.')
-      return
+    try {
+      const { error: err } = await authClient.signIn.email({ email, password })
+      if (err) {
+        setError('Identifiants invalides.')
+        return
+      }
+      navigate({ to: '/admin' })
+    } catch {
+      setError('Impossible de se connecter pour le moment.')
+    } finally {
+      setBusy(false)
     }
-    navigate({ to: '/admin' })
   }
 
   return (

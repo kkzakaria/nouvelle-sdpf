@@ -7,6 +7,21 @@ import { requireAdmin } from '#/lib/admin-auth'
 import { categoryInput, categoryUpdate } from '#/lib/admin-schemas'
 import { slugify } from '#/lib/slug'
 
+async function uniqueCategorySlug(base: string): Promise<string> {
+  const root = slugify(base)
+  let candidate = root
+  let i = 2
+  for (;;) {
+    const rows = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(eq(categories.slug, candidate))
+      .limit(1)
+    if (rows.length === 0) return candidate
+    candidate = `${root}-${i++}`
+  }
+}
+
 export const adminListCategories = createServerFn({ method: 'GET' }).handler(
   async () => {
     await requireAdmin()
@@ -18,7 +33,7 @@ export const adminCreateCategory = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => categoryInput.parse(d))
   .handler(async ({ data }) => {
     await requireAdmin()
-    const slug = data.slug ?? slugify(data.label)
+    const slug = data.slug ?? (await uniqueCategorySlug(data.label))
     await db.insert(categories).values({
       id: slug,
       slug,

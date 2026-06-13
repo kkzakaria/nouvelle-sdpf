@@ -71,7 +71,7 @@ export function ProductForm({
         await router.navigate({ to: '/admin/produits/$id', params: { id } })
       }
     } catch {
-      setError('Échec de l’enregistrement.')
+      setError("Échec de l'enregistrement.")
     } finally {
       setBusy(false)
     }
@@ -96,9 +96,10 @@ export function ProductForm({
         ],
       }))
       await router.invalidate()
-      e.target.value = ''
     } catch {
-      setError('Échec de l’envoi de l’image (type/taille ?).')
+      setError("Échec de l'envoi de l'image (type/taille ?).")
+    } finally {
+      e.target.value = ''
     }
   }
 
@@ -112,21 +113,24 @@ export function ProductForm({
       }))
       await router.invalidate()
     } catch {
-      setError('Échec de la suppression de l’image.')
+      setError("Échec de la suppression de l'image.")
     }
   }
 
   async function move(index: number, dir: -1 | 1) {
+    if (!f.id) return
     const j = index + dir
     if (j < 0 || j >= f.images.length) return
     setError('')
-    const next = [...f.images]
+    const previous = f.images
+    const next = [...previous]
     ;[next[index], next[j]] = [next[j], next[index]]
     setF((prev) => ({ ...prev, images: next }))
     try {
-      await adminReorderImages({ data: { orderedIds: next.map((im) => im.id) } })
+      await adminReorderImages({ data: { productId: f.id, orderedIds: next.map((im) => im.id) } })
       await router.invalidate()
     } catch {
+      setF((prev) => ({ ...prev, images: previous }))
       setError('Échec du réordonnancement.')
     }
   }

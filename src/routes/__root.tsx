@@ -39,7 +39,10 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { settings } = Route.useLoaderData()
   const isAdmin = useRouterState({
-    select: (s) => s.location.pathname.startsWith('/admin'),
+    select: (s) => {
+      const pathname = s.location.pathname
+      return pathname === '/admin' || pathname.startsWith('/admin/')
+    },
   })
   if (isAdmin) return <Outlet />
   return (

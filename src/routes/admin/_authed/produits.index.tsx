@@ -24,13 +24,21 @@ function ProductsList() {
   const router = useRouter()
 
   async function toggle(id: string, featured: boolean) {
-    await adminToggleFeatured({ data: { id, featured } })
-    await router.invalidate()
+    try {
+      await adminToggleFeatured({ data: { id, featured } })
+      await router.invalidate()
+    } catch {
+      alert('Échec de la mise à jour du statut vedette.')
+    }
   }
   async function remove(id: string) {
     if (!confirm('Supprimer ce produit et ses images ?')) return
-    await adminDeleteProduct({ data: { id } })
-    await router.invalidate()
+    try {
+      await adminDeleteProduct({ data: { id } })
+      await router.invalidate()
+    } catch {
+      alert('Échec de la suppression du produit.')
+    }
   }
 
   return (
@@ -40,8 +48,7 @@ function ProductsList() {
           Produits ({products.length})
         </h1>
         <Link
-          to="/admin/produits/$id"
-          params={{ id: 'nouveau' }}
+          to="/admin/produits/nouveau"
           className="btn btn-brand"
         >
           + Nouveau produit
