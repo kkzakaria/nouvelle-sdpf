@@ -20,6 +20,7 @@ import { Route as AdminAuthedRouteImport } from './routes/admin/_authed'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminAuthedProduitsRouteImport } from './routes/admin/_authed/produits'
+import { Route as AdminAuthedParametresRouteImport } from './routes/admin/_authed/parametres'
 import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
 import { Route as AdminAuthedProduitsIdRouteImport } from './routes/admin/_authed/produits.$id'
 
@@ -78,6 +79,11 @@ const AdminAuthedProduitsRoute = AdminAuthedProduitsRouteImport.update({
   path: '/produits',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedParametresRoute = AdminAuthedParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedCategoriesRoute = AdminAuthedCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/parametres': typeof AdminAuthedParametresRoute
   '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof AdminAuthedIndexRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/parametres': typeof AdminAuthedParametresRoute
   '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof AdminAuthedIndexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/_authed/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/_authed/parametres': typeof AdminAuthedParametresRoute
   '/admin/_authed/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/categories'
+    | '/admin/parametres'
     | '/admin/produits'
     | '/api/auth/$'
     | '/admin/'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/categories'
+    | '/admin/parametres'
     | '/admin/produits'
     | '/api/auth/$'
     | '/admin'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/_authed/categories'
+    | '/admin/_authed/parametres'
     | '/admin/_authed/produits'
     | '/api/auth/$'
     | '/admin/_authed/'
@@ -272,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedProduitsRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/parametres': {
+      id: '/admin/_authed/parametres'
+      path: '/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AdminAuthedParametresRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/categories': {
       id: '/admin/_authed/categories'
       path: '/categories'
@@ -302,12 +321,14 @@ const AdminAuthedProduitsRouteWithChildren =
 
 interface AdminAuthedRouteChildren {
   AdminAuthedCategoriesRoute: typeof AdminAuthedCategoriesRoute
+  AdminAuthedParametresRoute: typeof AdminAuthedParametresRoute
   AdminAuthedProduitsRoute: typeof AdminAuthedProduitsRouteWithChildren
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
 }
 
 const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedCategoriesRoute: AdminAuthedCategoriesRoute,
+  AdminAuthedParametresRoute: AdminAuthedParametresRoute,
   AdminAuthedProduitsRoute: AdminAuthedProduitsRouteWithChildren,
   AdminAuthedIndexRoute: AdminAuthedIndexRoute,
 }
