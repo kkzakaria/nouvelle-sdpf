@@ -19,7 +19,9 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminAuthedRouteImport } from './routes/admin/_authed'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AdminAuthedProduitsRouteImport } from './routes/admin/_authed/produits'
 import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
+import { Route as AdminAuthedProduitsIdRouteImport } from './routes/admin/_authed/produits.$id'
 
 const DevisRoute = DevisRouteImport.update({
   id: '/devis',
@@ -71,10 +73,20 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAuthedProduitsRoute = AdminAuthedProduitsRouteImport.update({
+  id: '/produits',
+  path: '/produits',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedCategoriesRoute = AdminAuthedCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
   getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedProduitsIdRoute = AdminAuthedProduitsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminAuthedProduitsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -87,8 +99,10 @@ export interface FileRoutesByFullPath {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof AdminAuthedIndexRoute
+  '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,8 +113,10 @@ export interface FileRoutesByTo {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof AdminAuthedIndexRoute
+  '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,8 +129,10 @@ export interface FileRoutesById {
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/_authed/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/_authed/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
+  '/admin/_authed/produits/$id': typeof AdminAuthedProduitsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,8 +146,10 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/categories'
+    | '/admin/produits'
     | '/api/auth/$'
     | '/admin/'
+    | '/admin/produits/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,8 +160,10 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/categories'
+    | '/admin/produits'
     | '/api/auth/$'
     | '/admin'
+    | '/admin/produits/$id'
   id:
     | '__root__'
     | '/'
@@ -153,8 +175,10 @@ export interface FileRouteTypes {
     | '/img/$'
     | '/produit/$slug'
     | '/admin/_authed/categories'
+    | '/admin/_authed/produits'
     | '/api/auth/$'
     | '/admin/_authed/'
+    | '/admin/_authed/produits/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_authed/produits': {
+      id: '/admin/_authed/produits'
+      path: '/produits'
+      fullPath: '/admin/produits'
+      preLoaderRoute: typeof AdminAuthedProduitsRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/categories': {
       id: '/admin/_authed/categories'
       path: '/categories'
@@ -248,16 +279,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedCategoriesRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/produits/$id': {
+      id: '/admin/_authed/produits/$id'
+      path: '/$id'
+      fullPath: '/admin/produits/$id'
+      preLoaderRoute: typeof AdminAuthedProduitsIdRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
   }
 }
 
+interface AdminAuthedProduitsRouteChildren {
+  AdminAuthedProduitsIdRoute: typeof AdminAuthedProduitsIdRoute
+}
+
+const AdminAuthedProduitsRouteChildren: AdminAuthedProduitsRouteChildren = {
+  AdminAuthedProduitsIdRoute: AdminAuthedProduitsIdRoute,
+}
+
+const AdminAuthedProduitsRouteWithChildren =
+  AdminAuthedProduitsRoute._addFileChildren(AdminAuthedProduitsRouteChildren)
+
 interface AdminAuthedRouteChildren {
   AdminAuthedCategoriesRoute: typeof AdminAuthedCategoriesRoute
+  AdminAuthedProduitsRoute: typeof AdminAuthedProduitsRouteWithChildren
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
 }
 
 const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedCategoriesRoute: AdminAuthedCategoriesRoute,
+  AdminAuthedProduitsRoute: AdminAuthedProduitsRouteWithChildren,
   AdminAuthedIndexRoute: AdminAuthedIndexRoute,
 }
 

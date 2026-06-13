@@ -1199,3 +1199,24 @@ textarea.field {
   .admin-nav { flex-direction: row; flex-wrap: wrap; }
   .admin-logout { margin: 0; }
 }
+
+.admin-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.admin-img {
+  border: 1px solid #e3e8ee;
+  border-radius: 10px;
+  padding: 8px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.admin-img img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #fff;
+}
