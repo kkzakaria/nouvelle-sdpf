@@ -85,7 +85,16 @@ export function ProductForm({
     fd.set('productId', f.id)
     fd.set('file', file)
     try {
-      await adminUploadImage({ data: fd })
+      const { id, key } = await adminUploadImage({ data: fd })
+      // Reflète tout de suite la nouvelle image (le composant ne se remonte pas
+      // tant que l'id de produit ne change pas) ; invalidate resynchronise le loader.
+      setF((prev) => ({
+        ...prev,
+        images: [
+          ...prev.images,
+          { id, key, alt: '', sortOrder: prev.images.length },
+        ],
+      }))
       await router.invalidate()
       e.target.value = ''
     } catch {

@@ -22,6 +22,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminAuthedProduitsRouteImport } from './routes/admin/_authed/produits'
 import { Route as AdminAuthedParametresRouteImport } from './routes/admin/_authed/parametres'
 import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
+import { Route as AdminAuthedProduitsIndexRouteImport } from './routes/admin/_authed/produits.index'
 import { Route as AdminAuthedProduitsIdRouteImport } from './routes/admin/_authed/produits.$id'
 
 const DevisRoute = DevisRouteImport.update({
@@ -89,6 +90,12 @@ const AdminAuthedCategoriesRoute = AdminAuthedCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedProduitsIndexRoute =
+  AdminAuthedProduitsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminAuthedProduitsRoute,
+  } as any)
 const AdminAuthedProduitsIdRoute = AdminAuthedProduitsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof AdminAuthedIndexRoute
   '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -121,10 +129,10 @@ export interface FileRoutesByTo {
   '/produit/$slug': typeof ProduitSlugRoute
   '/admin/categories': typeof AdminAuthedCategoriesRoute
   '/admin/parametres': typeof AdminAuthedParametresRoute
-  '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof AdminAuthedIndexRoute
   '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
   '/admin/_authed/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/_authed/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/admin/'
     | '/admin/produits/$id'
+    | '/admin/produits/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,10 +181,10 @@ export interface FileRouteTypes {
     | '/produit/$slug'
     | '/admin/categories'
     | '/admin/parametres'
-    | '/admin/produits'
     | '/api/auth/$'
     | '/admin'
     | '/admin/produits/$id'
+    | '/admin/produits'
   id:
     | '__root__'
     | '/'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/admin/_authed/'
     | '/admin/_authed/produits/$id'
+    | '/admin/_authed/produits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -298,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedCategoriesRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/produits/': {
+      id: '/admin/_authed/produits/'
+      path: '/'
+      fullPath: '/admin/produits/'
+      preLoaderRoute: typeof AdminAuthedProduitsIndexRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
     '/admin/_authed/produits/$id': {
       id: '/admin/_authed/produits/$id'
       path: '/$id'
@@ -310,10 +328,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminAuthedProduitsRouteChildren {
   AdminAuthedProduitsIdRoute: typeof AdminAuthedProduitsIdRoute
+  AdminAuthedProduitsIndexRoute: typeof AdminAuthedProduitsIndexRoute
 }
 
 const AdminAuthedProduitsRouteChildren: AdminAuthedProduitsRouteChildren = {
   AdminAuthedProduitsIdRoute: AdminAuthedProduitsIdRoute,
+  AdminAuthedProduitsIndexRoute: AdminAuthedProduitsIndexRoute,
 }
 
 const AdminAuthedProduitsRouteWithChildren =
