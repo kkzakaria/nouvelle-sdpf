@@ -19,6 +19,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminAuthedRouteImport } from './routes/admin/_authed'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
 
 const DevisRoute = DevisRouteImport.update({
   id: '/devis',
@@ -70,6 +71,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAuthedCategoriesRoute = AdminAuthedCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/categories': typeof AdminAuthedCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof AdminAuthedIndexRoute
 }
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/categories': typeof AdminAuthedCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof AdminAuthedIndexRoute
 }
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/_authed/categories': typeof AdminAuthedCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
 }
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/categories'
     | '/api/auth/$'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/categories'
     | '/api/auth/$'
     | '/admin'
   id:
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/_authed/categories'
     | '/api/auth/$'
     | '/admin/_authed/'
   fileRoutesById: FileRoutesById
@@ -229,14 +241,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_authed/categories': {
+      id: '/admin/_authed/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminAuthedCategoriesRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
   }
 }
 
 interface AdminAuthedRouteChildren {
+  AdminAuthedCategoriesRoute: typeof AdminAuthedCategoriesRoute
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
 }
 
 const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
+  AdminAuthedCategoriesRoute: AdminAuthedCategoriesRoute,
   AdminAuthedIndexRoute: AdminAuthedIndexRoute,
 }
 
