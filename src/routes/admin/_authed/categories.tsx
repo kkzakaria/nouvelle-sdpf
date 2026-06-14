@@ -1,179 +1,141 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
-  adminCreateCategory,
   adminDeleteCategory,
   adminListCategories,
-  adminUpdateCategory,
 } from '#/lib/admin-categories'
+import { adminListProducts } from '#/lib/admin-products'
+import { Icon } from '#/components/Icon'
+import { GammeModal } from '#/components/admin/GammeModal'
+import { ConfirmDialog } from '#/components/admin/ConfirmDialog'
 
 export const Route = createFileRoute('/admin/_authed/categories')({
-  loader: async () => ({ categories: await adminListCategories() }),
+  loader: async () => {
+    const [categories, products] = await Promise.all([
+      adminListCategories(),
+      adminListProducts(),
+    ])
+    const counts: Record<string, number> = {}
+    for (const p of products)
+      counts[p.categoryId] = (counts[p.categoryId] ?? 0) + 1
+    return { categories, counts }
+  },
   component: Categories,
 })
 
-type Draft = {
-  id?: string
+type Cat = {
+  id: string
   label: string
   short: string
   description: string
   sortOrder: number
 }
-const EMPTY: Draft = { label: '', short: '', description: '', sortOrder: 0 }
+
+function iconFor(id: string): string {
+  if (id.includes('plaque')) return 'grid'
+  if (id.includes('filasse')) return 'spark'
+  if (id.includes('colle') || id.includes('enduit')) return 'doc'
+  if (id.includes('sanitaire')) return 'box'
+  if (id.includes('outillage') || id.includes('quincaillerie')) return 'tag'
+  return 'layers'
+}
 
 function Categories() {
-  const { categories } = Route.useLoaderData()
+  const { categories, counts } = Route.useLoaderData()
   const router = useRouter()
-  const [draft, setDraft] = useState<Draft>(EMPTY)
-  const [error, setError] = useState('')
-  const editing = Boolean(draft.id)
+  const [modal, setModal] = useState<'new' | Cat | null>(null)
+  const [confirm, setConfirm] = useState<Cat | null>(null)
+  const [busy, setBusy] = useState(false)
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
+  async function remove() {
+    if (!confirm) return
+    setBusy(true)
     try {
-      if (draft.id) {
-        await adminUpdateCategory({
-          data: {
-            id: draft.id,
-            label: draft.label,
-            short: draft.short,
-            description: draft.description,
-            sortOrder: draft.sortOrder,
-          },
-        })
-      } else {
-        await adminCreateCategory({
-          data: {
-            label: draft.label,
-            short: draft.short,
-            description: draft.description,
-            sortOrder: draft.sortOrder,
-          },
-        })
-      }
-      setDraft(EMPTY)
+      await adminDeleteCategory({ data: { id: confirm.id } })
+      setConfirm(null)
       await router.invalidate()
     } catch {
-      setError('Échec de l’enregistrement.')
-    }
-  }
-
-  async function remove(id: string) {
-    setError('')
-    try {
-      await adminDeleteCategory({ data: { id } })
-      await router.invalidate()
-    } catch {
-      setError(
-        'Suppression impossible : la catégorie contient encore des produits.',
-      )
+      alert('Suppression impossible : la gamme contient encore des produits.')
+    } finally {
+      setBusy(false)
     }
   }
 
   return (
-    <div>
-      <h1 className="admin-h1">Catégories</h1>
-      {error ? <p className="admin-error">{error}</p> : null}
-
-      <form className="admin-card" onSubmit={save} style={{ marginBottom: 20 }}>
-        <h2>{editing ? `Modifier « ${draft.label} »` : 'Nouvelle catégorie'}</h2>
-        <label className="admin-field">
-          <span>Libellé</span>
-          <input
-            value={draft.label}
-            onChange={(e) => setDraft({ ...draft, label: e.target.value })}
-            required
-          />
-        </label>
-        <label className="admin-field">
-          <span>Sous-titre</span>
-          <input
-            value={draft.short}
-            onChange={(e) => setDraft({ ...draft, short: e.target.value })}
-            required
-          />
-        </label>
-        <label className="admin-field">
-          <span>Description</span>
-          <textarea
-            value={draft.description}
-            onChange={(e) =>
-              setDraft({ ...draft, description: e.target.value })
-            }
-          />
-        </label>
-        <label className="admin-field">
-          <span>Ordre</span>
-          <input
-            type="number"
-            value={draft.sortOrder}
-            onChange={(e) =>
-              setDraft({ ...draft, sortOrder: Number(e.target.value) })
-            }
-          />
-        </label>
-        <div className="admin-row-actions">
-          <button className="btn btn-brand" type="submit">
-            {editing ? 'Enregistrer' : 'Créer'}
-          </button>
-          {editing ? (
-            <button
-              className="btn"
-              type="button"
-              onClick={() => setDraft(EMPTY)}
-            >
-              Annuler
-            </button>
-          ) : null}
+    <>
+      <div className="adm-topbar">
+        <div>
+          <h1 className="adm-h1">Gammes</h1>
+          <p className="adm-sub">{categories.length} familles de produits</p>
         </div>
-      </form>
+        <button className="btn btn-primary" onClick={() => setModal('new')}>
+          <Icon name="plus" size={18} stroke={2.6} /> Nouvelle gamme
+        </button>
+      </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Libellé</th>
-            <th>Slug</th>
-            <th>Ordre</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((c) => (
-            <tr key={c.id}>
-              <td>{c.label}</td>
-              <td>{c.slug}</td>
-              <td>{c.sortOrder}</td>
-              <td>
-                <div className="admin-row-actions">
+      <div className="adm-body">
+        <div className="adm-gammes">
+          {categories.map((c) => {
+            const n = counts[c.id] ?? 0
+            return (
+              <div className="adm-card adm-gamme" key={c.id}>
+                <div className="adm-gamme-icon">
+                  <Icon name={iconFor(c.id)} size={26} />
+                </div>
+                <div className="adm-gamme-main">
+                  <div className="adm-gamme-top">
+                    <h3>{c.label}</h3>
+                    <span className="chip">
+                      {String(n).padStart(2, '0')} réf.
+                    </span>
+                  </div>
+                  <p>{c.description || c.short}</p>
+                </div>
+                <div className="adm-gamme-actions">
                   <button
-                    className="btn"
-                    type="button"
-                    onClick={() =>
-                      setDraft({
-                        id: c.id,
-                        label: c.label,
-                        short: c.short,
-                        description: c.description,
-                        sortOrder: c.sortOrder,
-                      })
-                    }
+                    className="adm-icbtn"
+                    title="Modifier"
+                    onClick={() => setModal(c)}
                   >
-                    Modifier
+                    <Icon name="edit" size={17} />
                   </button>
                   <button
-                    className="btn btn-danger"
-                    type="button"
-                    onClick={() => remove(c.id)}
+                    className="adm-icbtn danger"
+                    disabled={n > 0}
+                    title={
+                      n > 0
+                        ? 'Gamme non vide — déplacez d’abord ses produits'
+                        : 'Supprimer'
+                    }
+                    onClick={() => setConfirm(c)}
                   >
-                    Supprimer
+                    <Icon name="trash" size={17} />
                   </button>
                 </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {modal && (
+        <GammeModal
+          category={modal === 'new' ? null : modal}
+          onClose={() => setModal(null)}
+          onSaved={async () => {
+            setModal(null)
+            await router.invalidate()
+          }}
+        />
+      )}
+      {confirm && (
+        <ConfirmDialog
+          message={`La gamme « ${confirm.label} » sera supprimée.`}
+          busy={busy}
+          onConfirm={remove}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </>
   )
 }

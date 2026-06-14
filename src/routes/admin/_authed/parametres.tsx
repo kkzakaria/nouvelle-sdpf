@@ -2,19 +2,12 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getSettings } from '#/lib/catalog'
 import { adminUpdateSettings } from '#/lib/admin-settings'
+import { Icon } from '#/components/Icon'
 
 export const Route = createFileRoute('/admin/_authed/parametres')({
   loader: async () => ({ settings: await getSettings() }),
   component: Settings,
 })
-
-const FIELDS: Array<{ key: keyof Form; label: string }> = [
-  { key: 'whatsapp_number', label: 'Numéro WhatsApp (devis)' },
-  { key: 'contact_phone', label: 'Téléphone affiché (WhatsApp)' },
-  { key: 'contact_phone_call', label: 'Téléphone appels & SMS' },
-  { key: 'contact_email', label: 'E-mail de contact' },
-  { key: 'contact_address', label: 'Adresse' },
-]
 
 type Form = {
   whatsapp_number: string
@@ -36,46 +29,118 @@ function Settings() {
   })
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault()
+  const set = (k: keyof Form, v: string) => {
+    setSaved(false)
+    setForm((s) => ({ ...s, [k]: v }))
+  }
+  const waClean = form.whatsapp_number.replace(/[^0-9]/g, '')
+
+  async function save() {
     setError('')
     setSaved(false)
+    setBusy(true)
     try {
       await adminUpdateSettings({ data: form })
       await router.invalidate()
       setSaved(true)
     } catch {
-      setError("Échec de l’enregistrement.")
+      setError("Échec de l'enregistrement.")
+    } finally {
+      setBusy(false)
     }
   }
 
   return (
-    <div>
-      <h1 className="admin-h1">Paramètres de contact</h1>
-      <form className="admin-card" onSubmit={save}>
-        {FIELDS.map((field) => (
-          <label className="admin-field" key={field.key}>
-            <span>{field.label}</span>
-            <input
-              value={form[field.key]}
-              onChange={(e) => {
-                setSaved(false)
-                setForm({ ...form, [field.key]: e.target.value })
-              }}
-            />
-          </label>
-        ))}
-        {error ? <p className="admin-error">{error}</p> : null}
-        {saved ? (
-          <p style={{ color: '#1e8a4c', fontWeight: 600 }}>Enregistré.</p>
-        ) : null}
-        <div className="admin-row-actions">
-          <button className="btn btn-brand" type="submit">
-            Enregistrer
-          </button>
+    <>
+      <div className="adm-topbar">
+        <div>
+          <h1 className="adm-h1">Paramètres</h1>
+          <p className="adm-sub">
+            Coordonnées et informations affichées sur le site.
+          </p>
         </div>
-      </form>
-    </div>
+        <button className="btn btn-primary" onClick={save} disabled={busy}>
+          <Icon name="save" size={17} /> {busy ? 'Enregistrement…' : 'Enregistrer'}
+        </button>
+      </div>
+
+      <div className="adm-body">
+        <div className="adm-settings">
+          <section className="adm-card adm-set-card">
+            <div className="adm-set-head">
+              <Icon name="pin" size={18} />
+              <h3>Coordonnées</h3>
+            </div>
+            <div className="adm-field">
+              <label className="field-label">Adresse</label>
+              <input
+                className="field"
+                value={form.contact_address}
+                onChange={(e) => set('contact_address', e.target.value)}
+              />
+            </div>
+            <div className="adm-grid2">
+              <div className="adm-field">
+                <label className="field-label">
+                  Téléphone affiché (WhatsApp)
+                </label>
+                <input
+                  className="field"
+                  value={form.contact_phone}
+                  onChange={(e) => set('contact_phone', e.target.value)}
+                />
+              </div>
+              <div className="adm-field">
+                <label className="field-label">Téléphone appels &amp; SMS</label>
+                <input
+                  className="field"
+                  value={form.contact_phone_call}
+                  onChange={(e) => set('contact_phone_call', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="adm-field" style={{ marginBottom: 0 }}>
+              <label className="field-label">E-mail de contact</label>
+              <input
+                className="field"
+                value={form.contact_email}
+                onChange={(e) => set('contact_email', e.target.value)}
+              />
+            </div>
+          </section>
+
+          <section className="adm-card adm-set-card">
+            <div className="adm-set-head">
+              <Icon name="wa" size={18} />
+              <h3>WhatsApp</h3>
+            </div>
+            <div className="adm-field" style={{ marginBottom: 0 }}>
+              <label className="field-label">
+                Numéro WhatsApp pour le devis (international)
+              </label>
+              <input
+                className="field"
+                value={form.whatsapp_number}
+                onChange={(e) => set('whatsapp_number', e.target.value)}
+                placeholder="+225 07 17 59 30 30"
+              />
+            </div>
+            <div className="adm-wa-prev">
+              <Icon name="wa" size={16} /> wa.me/{waClean || '…'}
+            </div>
+          </section>
+
+          {error ? <div className="adm-err">{error}</div> : null}
+          {saved && (
+            <div className="adm-saved">
+              <Icon name="check" size={16} stroke={2.6} /> Modifications
+              enregistrées
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   )
 }

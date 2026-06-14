@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '#/lib/auth-client'
+import { LogoChip } from '#/components/LogoChip'
+import { Icon } from '#/components/Icon'
 
 export const Route = createFileRoute('/admin/login')({
   component: Login,
@@ -32,22 +34,64 @@ function Login() {
   }
 
   return (
-    <div className="admin-login">
-      <form className="admin-card admin-login-card" onSubmit={submit}>
-        <h1>Administration NSDPF</h1>
-        <label className="admin-field">
-          <span>E-mail</span>
-          <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </label>
-        <label className="admin-field">
-          <span>Mot de passe</span>
-          <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
-        {error ? <p className="admin-error">{error}</p> : null}
-        <button className="btn btn-brand" type="submit" disabled={busy}>
-          {busy ? 'Connexion…' : 'Se connecter'}
-        </button>
-      </form>
+    <div className="admin">
+      <div className="adm-login">
+        <div className="adm-login-grid" />
+        <form className="adm-login-card" onSubmit={submit}>
+          <div className="all-brand">
+            <LogoChip />
+            <div>
+              <b>NSDPF</b>
+              <span>Administration</span>
+            </div>
+          </div>
+          <h1>Espace administration</h1>
+          <p>Gérez le catalogue, les gammes et les coordonnées de NSDPF.</p>
+
+          <label className="field-label">E-mail</label>
+          <div className="adm-pw">
+            <Icon name="mail" size={18} />
+            <input
+              type="email"
+              autoComplete="username"
+              placeholder="vous@exemple.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setError('')
+              }}
+              required
+            />
+          </div>
+
+          <label className="field-label">Mot de passe</label>
+          <div className="adm-pw">
+            <Icon name="lock" size={18} />
+            <input
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError('')
+              }}
+              required
+            />
+          </div>
+
+          {error ? <div className="adm-err">{error}</div> : null}
+
+          <button
+            className="btn btn-primary btn-block btn-lg"
+            type="submit"
+            disabled={busy}
+          >
+            {busy ? 'Connexion…' : 'Se connecter'}
+            <Icon name="arrow-r" size={18} stroke={2.4} />
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

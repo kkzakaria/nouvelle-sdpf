@@ -31,7 +31,21 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
 export const adminListProducts = createServerFn({ method: 'GET' }).handler(
   async () => {
     await requireAdmin()
-    return db.select().from(products).orderBy(asc(products.sortOrder))
+    const rows = await db
+      .select()
+      .from(products)
+      .orderBy(asc(products.sortOrder))
+    const imgs = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sortOrder))
+    return rows.map((p) => {
+      const first = imgs.find((i) => i.productId === p.id)
+      return {
+        ...p,
+        image: first ? { key: first.r2Key, alt: first.alt } : null,
+      }
+    })
   },
 )
 
