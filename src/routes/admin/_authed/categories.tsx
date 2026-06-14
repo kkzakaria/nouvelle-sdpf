@@ -5,6 +5,7 @@ import {
   adminListCategories,
 } from '#/lib/admin-categories'
 import { adminListProducts } from '#/lib/admin-products'
+import { useIsMobile } from '#/lib/use-is-mobile'
 import { Icon } from '#/components/Icon'
 import { GammeModal } from '#/components/admin/GammeModal'
 import { ConfirmDialog } from '#/components/admin/ConfirmDialog'
@@ -43,6 +44,7 @@ function iconFor(id: string): string {
 function Categories() {
   const { categories, counts } = Route.useLoaderData()
   const router = useRouter()
+  const mobile = useIsMobile()
   const [modal, setModal] = useState<'new' | Cat | null>(null)
   const [confirm, setConfirm] = useState<Cat | null>(null)
   const [busy, setBusy] = useState(false)
@@ -59,6 +61,88 @@ function Categories() {
     } finally {
       setBusy(false)
     }
+  }
+
+  const overlays = (
+    <>
+      {modal && (
+        <GammeModal
+          category={modal === 'new' ? null : modal}
+          onClose={() => setModal(null)}
+          onSaved={async () => {
+            setModal(null)
+            await router.invalidate()
+          }}
+        />
+      )}
+      {confirm && (
+        <ConfirmDialog
+          message={`La gamme « ${confirm.label} » sera supprimée.`}
+          busy={busy}
+          onConfirm={remove}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </>
+  )
+
+  if (mobile) {
+    return (
+      <>
+        <header className="amb">
+          <div className="amb-row">
+            <div style={{ minWidth: 0 }}>
+              <div className="amb-lab">{categories.length} familles</div>
+              <h1 className="amb-h1">Gammes</h1>
+            </div>
+            <button className="amb-add" onClick={() => setModal('new')}>
+              <Icon name="plus" size={18} stroke={2.6} /> Gamme
+            </button>
+          </div>
+        </header>
+        <div className="amb-body">
+          <div className="am-gammes">
+            {categories.map((c) => {
+              const n = counts[c.id] ?? 0
+              return (
+                <div className="am-gamme" key={c.id}>
+                  <div className="am-gamme-icon">
+                    <Icon name={iconFor(c.id)} size={24} />
+                  </div>
+                  <div className="am-gamme-main">
+                    <div className="am-gamme-top">
+                      <h3>{c.label}</h3>
+                      <span className="chip">
+                        {String(n).padStart(2, '0')} réf.
+                      </span>
+                    </div>
+                    <p>{c.description || c.short}</p>
+                  </div>
+                  <div className="am-gamme-acts">
+                    <button
+                      className="am-icbtn"
+                      aria-label="Modifier"
+                      onClick={() => setModal(c)}
+                    >
+                      <Icon name="edit" size={16} />
+                    </button>
+                    <button
+                      className="am-icbtn danger"
+                      disabled={n > 0}
+                      aria-label="Supprimer"
+                      onClick={() => setConfirm(c)}
+                    >
+                      <Icon name="trash" size={16} />
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        {overlays}
+      </>
+    )
   }
 
   return (
@@ -117,25 +201,7 @@ function Categories() {
           })}
         </div>
       </div>
-
-      {modal && (
-        <GammeModal
-          category={modal === 'new' ? null : modal}
-          onClose={() => setModal(null)}
-          onSaved={async () => {
-            setModal(null)
-            await router.invalidate()
-          }}
-        />
-      )}
-      {confirm && (
-        <ConfirmDialog
-          message={`La gamme « ${confirm.label} » sera supprimée.`}
-          busy={busy}
-          onConfirm={remove}
-          onCancel={() => setConfirm(null)}
-        />
-      )}
+      {overlays}
     </>
   )
 }

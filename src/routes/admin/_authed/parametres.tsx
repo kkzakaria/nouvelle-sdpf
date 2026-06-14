@@ -2,6 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getSettings } from '#/lib/catalog'
 import { adminUpdateSettings } from '#/lib/admin-settings'
+import { useIsMobile } from '#/lib/use-is-mobile'
 import { Icon } from '#/components/Icon'
 
 export const Route = createFileRoute('/admin/_authed/parametres')({
@@ -20,6 +21,7 @@ type Form = {
 function Settings() {
   const { settings } = Route.useLoaderData()
   const router = useRouter()
+  const mobile = useIsMobile()
   const [form, setForm] = useState<Form>({
     whatsapp_number: settings.whatsapp_number,
     contact_phone: settings.contact_phone,
@@ -50,6 +52,111 @@ function Settings() {
     } finally {
       setBusy(false)
     }
+  }
+
+  if (mobile) {
+    return (
+      <>
+        <header className="amb">
+          <div className="amb-row">
+            <div style={{ minWidth: 0 }}>
+              <div className="amb-lab">Configuration</div>
+              <h1 className="amb-h1">Paramètres</h1>
+            </div>
+            <button
+              className="amb-add icon-only"
+              aria-label="Enregistrer"
+              onClick={save}
+              disabled={busy}
+            >
+              <Icon name="save" size={19} />
+            </button>
+          </div>
+        </header>
+        <div className="amb-body">
+          <div className="am-card">
+            <div className="am-set-head">
+              <Icon name="pin" size={17} />
+              <h3>Coordonnées</h3>
+            </div>
+            <div className="am-field">
+              <label className="field-label">Adresse</label>
+              <input
+                className="field"
+                value={form.contact_address}
+                onChange={(e) => set('contact_address', e.target.value)}
+              />
+            </div>
+            <div className="am-field">
+              <label className="field-label">Téléphone affiché (WhatsApp)</label>
+              <input
+                className="field"
+                value={form.contact_phone}
+                onChange={(e) => set('contact_phone', e.target.value)}
+              />
+            </div>
+            <div className="am-field">
+              <label className="field-label">Téléphone appels &amp; SMS</label>
+              <input
+                className="field"
+                value={form.contact_phone_call}
+                onChange={(e) => set('contact_phone_call', e.target.value)}
+              />
+            </div>
+            <div className="am-field">
+              <label className="field-label">E-mail de contact</label>
+              <input
+                className="field"
+                value={form.contact_email}
+                onChange={(e) => set('contact_email', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="am-card" style={{ marginTop: 14 }}>
+            <div className="am-set-head">
+              <Icon name="wa" size={17} />
+              <h3>WhatsApp</h3>
+            </div>
+            <div className="am-field">
+              <label className="field-label">
+                Numéro WhatsApp pour le devis
+              </label>
+              <input
+                className="field"
+                value={form.whatsapp_number}
+                onChange={(e) => set('whatsapp_number', e.target.value)}
+                placeholder="+225 07 17 59 30 30"
+              />
+            </div>
+            <div className="am-wa-prev">
+              <Icon name="wa" size={15} /> wa.me/{waClean || '…'}
+            </div>
+          </div>
+
+          {error ? (
+            <div className="am-err" style={{ marginTop: 14 }}>
+              {error}
+            </div>
+          ) : null}
+
+          <button
+            className="btn btn-primary btn-block btn-lg"
+            style={{ marginTop: 14 }}
+            onClick={save}
+            disabled={busy}
+          >
+            <Icon name="save" size={18} />{' '}
+            {busy ? 'Enregistrement…' : 'Enregistrer les modifications'}
+          </button>
+        </div>
+        {saved && (
+          <div className="am-toast">
+            <Icon name="check" size={16} stroke={2.6} /> Modifications enregistrées
+          </div>
+        )}
+      </>
+    )
   }
 
   return (

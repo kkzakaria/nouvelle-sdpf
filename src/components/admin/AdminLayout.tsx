@@ -1,5 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { authClient } from '#/lib/auth-client'
+import { useIsMobile } from '#/lib/use-is-mobile'
 import { LogoChip } from '#/components/LogoChip'
 import { Icon } from '#/components/Icon'
 
@@ -11,10 +12,33 @@ const NAV = [
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
+  const mobile = useIsMobile()
   async function logout() {
     await authClient.signOut()
     navigate({ to: '/admin/login' })
   }
+
+  if (mobile) {
+    return (
+      <div className="adm-m">
+        <div className="adm-m-scroll">{children}</div>
+        <nav className="am-nav">
+          {NAV.map((n) => (
+            <Link
+              key={n.to}
+              to={n.to}
+              className="am-nav-i"
+              activeProps={{ className: 'am-nav-i is-active' }}
+            >
+              <Icon name={n.icon} size={22} />
+              <span>{n.label}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+    )
+  }
+
   return (
     <div className="admin">
       <aside className="adm-side">

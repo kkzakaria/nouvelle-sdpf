@@ -11,6 +11,7 @@ import {
   adminUploadImage,
 } from '#/lib/admin-images'
 import { imgUrl } from '#/lib/img'
+import { useIsMobile } from '#/lib/use-is-mobile'
 import { Icon } from '#/components/Icon'
 import { ConfirmDialog } from '#/components/admin/ConfirmDialog'
 
@@ -37,6 +38,7 @@ export function ProductForm({
 }) {
   const router = useRouter()
   const navigate = useNavigate()
+  const mobile = useIsMobile()
   const [f, setF] = useState<ProductFormData>(initial)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -159,6 +161,218 @@ export function ProductForm({
   }
 
   const cover: Image | undefined = f.images.length ? f.images[0] : undefined
+
+  function imageGrid(cellClass: string, iconSize: number) {
+    return (
+      <div className={cellClass === 'am-imgcell' ? 'am-imgs' : 'adm-imgs'}>
+        {f.images.map((im, i) => (
+          <div key={im.id} className={cellClass}>
+            <img src={imgUrl(im.key)} alt={im.alt} />
+            <div className={cellClass === 'am-imgcell' ? 'am-imgcell-bar' : 'adm-imgcell-bar'}>
+              <button
+                className={cellClass === 'am-imgcell' ? 'am-icbtn' : 'adm-icbtn'}
+                type="button"
+                title="Monter"
+                onClick={() => move(i, -1)}
+              >
+                <Icon name="back" size={iconSize} />
+              </button>
+              <button
+                className={cellClass === 'am-imgcell' ? 'am-icbtn' : 'adm-icbtn'}
+                type="button"
+                title="Descendre"
+                onClick={() => move(i, 1)}
+              >
+                <Icon name="arrow-r" size={iconSize} />
+              </button>
+              <button
+                className={
+                  cellClass === 'am-imgcell' ? 'am-icbtn danger' : 'adm-icbtn danger'
+                }
+                type="button"
+                title="Supprimer"
+                onClick={() => deleteImg(im.id)}
+              >
+                <Icon name="trash" size={iconSize} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const previewCard = (
+    <div className="photo" style={{ height: 130, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8 }}>
+      <img
+        src={imgUrl(cover?.key)}
+        alt={f.name}
+        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+      />
+    </div>
+  )
+
+  const confirmEl = confirmDel ? (
+    <ConfirmDialog
+      message={`Le produit « ${f.name} » et ses images seront retirés du catalogue. Cette action est définitive.`}
+      busy={busy}
+      onConfirm={del}
+      onCancel={() => setConfirmDel(false)}
+    />
+  ) : null
+
+  if (mobile) {
+    return (
+      <div className="am-editor">
+        <div className="am-ed-bar">
+          <button className="am-back" type="button" onClick={back}>
+            <Icon name="back" size={20} />
+          </button>
+          <div className="am-ed-title">
+            {isNew ? 'Nouveau produit' : f.name || 'Modifier'}
+          </div>
+        </div>
+        <div className="am-ed-body">
+          {error ? <div className="am-err">{error}</div> : null}
+          <div className="am-card">
+            <div className="am-card-lab">Informations</div>
+            <div className="am-field">
+              <label className="field-label">Nom du produit</label>
+              <input
+                className="field"
+                value={f.name}
+                onChange={(e) => setF({ ...f, name: e.target.value })}
+                placeholder="Ex. Plâtre de finition"
+              />
+            </div>
+            <div className="am-grid2">
+              <div className="am-field">
+                <label className="field-label">Gamme</label>
+                <div className="am-select">
+                  <select
+                    className="field"
+                    value={f.categoryId}
+                    onChange={(e) => setF({ ...f, categoryId: e.target.value })}
+                  >
+                    <option value="" disabled>
+                      — Choisir —
+                    </option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                  <Icon name="chevron" size={16} />
+                </div>
+              </div>
+              <div className="am-field">
+                <label className="field-label">Format</label>
+                <input
+                  className="field"
+                  value={f.format}
+                  onChange={(e) => setF({ ...f, format: e.target.value })}
+                  placeholder="Ex. Sac 25 kg"
+                />
+              </div>
+            </div>
+            <div className="am-field">
+              <label className="field-label">Description courte</label>
+              <input
+                className="field"
+                value={f.descShort}
+                onChange={(e) => setF({ ...f, descShort: e.target.value })}
+                placeholder="Une ligne sur la carte produit"
+              />
+            </div>
+            <div className="am-field">
+              <label className="field-label">Description détaillée</label>
+              <textarea
+                className="field"
+                rows={5}
+                value={f.descLong}
+                onChange={(e) => setF({ ...f, descLong: e.target.value })}
+                placeholder="Texte complet de la fiche produit"
+              />
+            </div>
+            <label
+              className="am-field"
+              style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center' }}
+            >
+              <input
+                type="checkbox"
+                checked={f.featured}
+                onChange={(e) => setF({ ...f, featured: e.target.checked })}
+              />
+              <span className="field-label" style={{ margin: 0 }}>
+                Produit vedette
+              </span>
+            </label>
+          </div>
+
+          <div className="am-card">
+            <div className="am-card-lab">Photos du produit</div>
+            {isNew ? (
+              <p className="am-photo-hint">
+                Enregistrez d'abord le produit pour ajouter des images.
+              </p>
+            ) : (
+              <>
+                {f.images.length > 0 && imageGrid('am-imgcell', 14)}
+                <label className="btn btn-ghost" style={{ marginTop: 12 }}>
+                  <Icon name="image" size={16} /> Ajouter une image
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={upload}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+                <p className="am-photo-hint">PNG, JPEG ou WebP — 5 Mo max.</p>
+              </>
+            )}
+          </div>
+
+          <div className="am-card">
+            <div className="am-card-lab">Aperçu catalogue</div>
+            <div className="am-prev">
+              {previewCard}
+              <div className="am-prev-body">
+                <div className="am-prev-name">{f.name || 'Nom du produit'}</div>
+                <div className="am-prev-desc">
+                  {f.descShort || 'Description courte du produit.'}
+                </div>
+                <div>
+                  <span className="chip">{f.format || 'Format'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="am-ed-foot">
+          {!isNew && (
+            <button
+              className="btn btn-del"
+              type="button"
+              aria-label="Supprimer"
+              onClick={() => setConfirmDel(true)}
+            >
+              <Icon name="trash" size={19} />
+            </button>
+          )}
+          <button
+            className="btn btn-primary btn-lg"
+            type="button"
+            disabled={!valid || busy}
+            onClick={save}
+          >
+            <Icon name="save" size={18} /> {busy ? 'Enregistrement…' : 'Enregistrer'}
+          </button>
+        </div>
+        {confirmEl}
+      </div>
+    )
+  }
 
   return (
     <>
@@ -286,41 +500,7 @@ export function ProductForm({
                 </p>
               ) : (
                 <>
-                  {f.images.length > 0 && (
-                    <div className="adm-imgs">
-                      {f.images.map((im, i) => (
-                        <div key={im.id} className="adm-imgcell">
-                          <img src={imgUrl(im.key)} alt={im.alt} />
-                          <div className="adm-imgcell-bar">
-                            <button
-                              className="adm-icbtn"
-                              type="button"
-                              title="Monter"
-                              onClick={() => move(i, -1)}
-                            >
-                              <Icon name="back" size={14} />
-                            </button>
-                            <button
-                              className="adm-icbtn"
-                              type="button"
-                              title="Descendre"
-                              onClick={() => move(i, 1)}
-                            >
-                              <Icon name="arrow-r" size={14} />
-                            </button>
-                            <button
-                              className="adm-icbtn danger"
-                              type="button"
-                              title="Supprimer"
-                              onClick={() => deleteImg(im.id)}
-                            >
-                              <Icon name="trash" size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {f.images.length > 0 && imageGrid('adm-imgcell', 14)}
                   <label className="btn btn-ghost adm-fileinput" style={{ marginTop: 12 }}>
                     <Icon name="image" size={16} /> Ajouter une image
                     <input
@@ -341,27 +521,7 @@ export function ProductForm({
             <div className="adm-card adm-preview">
               <div className="adm-card-lab">Aperçu catalogue</div>
               <div className="adm-prev-card">
-                <div
-                  className="photo"
-                  style={{
-                    height: 130,
-                    background: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 8,
-                  }}
-                >
-                  <img
-                    src={imgUrl(cover?.key)}
-                    alt={f.name}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      objectFit: 'contain',
-                    }}
-                  />
-                </div>
+                {previewCard}
                 <div className="adm-prev-body">
                   <div className="adm-prev-name">
                     {f.name || 'Nom du produit'}
@@ -379,14 +539,7 @@ export function ProductForm({
         </div>
       </div>
 
-      {confirmDel && (
-        <ConfirmDialog
-          message={`Le produit « ${f.name} » et ses images seront retirés du catalogue. Cette action est définitive.`}
-          busy={busy}
-          onConfirm={del}
-          onCancel={() => setConfirmDel(false)}
-        />
-      )}
+      {confirmEl}
     </>
   )
 }

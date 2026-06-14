@@ -7,6 +7,7 @@ import {
   adminToggleFeatured,
 } from '#/lib/admin-products'
 import { imgUrl } from '#/lib/img'
+import { useIsMobile } from '#/lib/use-is-mobile'
 import { Icon } from '#/components/Icon'
 import { ConfirmDialog } from '#/components/admin/ConfirmDialog'
 
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/admin/_authed/produits/')({
 function ProductsList() {
   const { products, categories } = Route.useLoaderData()
   const router = useRouter()
+  const mobile = useIsMobile()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
   const [confirm, setConfirm] = useState<{ id: string; name: string } | null>(
@@ -37,8 +39,7 @@ function ProductsList() {
   const q = search.trim().toLowerCase()
   const list = products.filter((p) => {
     const okCat = filter === 'all' || p.categoryId === filter
-    const okQ =
-      !q || `${p.name} ${p.descShort}`.toLowerCase().includes(q)
+    const okQ = !q || `${p.name} ${p.descShort}`.toLowerCase().includes(q)
     return okCat && okQ
   })
 
@@ -63,6 +64,97 @@ function ProductsList() {
     } finally {
       setBusy(false)
     }
+  }
+
+  const filters = (
+    <>
+      <button
+        className="fchip"
+        data-on={filter === 'all' ? 'true' : 'false'}
+        onClick={() => setFilter('all')}
+      >
+        Toutes
+      </button>
+      {categories.map((c) => (
+        <button
+          key={c.id}
+          className="fchip"
+          data-on={filter === c.id ? 'true' : 'false'}
+          onClick={() => setFilter(c.id)}
+        >
+          {c.short}
+        </button>
+      ))}
+    </>
+  )
+
+  if (mobile) {
+    return (
+      <>
+        <header className="amb">
+          <div className="amb-row">
+            <div style={{ minWidth: 0 }}>
+              <div className="amb-lab">{products.length} références</div>
+              <h1 className="amb-h1">Produits</h1>
+            </div>
+            <Link to="/admin/produits/nouveau" className="amb-add">
+              <Icon name="plus" size={18} stroke={2.6} /> Produit
+            </Link>
+          </div>
+        </header>
+        <div className="amb-body">
+          <div className="searchbar am-search">
+            <Icon name="search" size={18} />
+            <input
+              placeholder="Rechercher un produit…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <span className="am-clear" onClick={() => setSearch('')}>
+                <Icon name="x" size={16} />
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="am-filters">{filters}</div>
+        <div className="amb-body" style={{ paddingTop: 0 }}>
+          {list.length === 0 ? (
+            <div className="am-empty">
+              <Icon name="search" size={40} stroke={1.4} />
+              <div>Aucun produit ne correspond.</div>
+            </div>
+          ) : (
+            <div className="am-list">
+              {list.map((p) => (
+                <Link
+                  key={p.id}
+                  to="/admin/produits/$id"
+                  params={{ id: p.id }}
+                  className="am-prow"
+                >
+                  <div className="am-prow-thumb">
+                    <img src={imgUrl(p.image?.key)} alt={p.name} />
+                  </div>
+                  <div className="am-prow-main">
+                    <div className="am-prow-name">{p.name}</div>
+                    <div className="am-prow-meta">
+                      <span className="chip chip-accent">
+                        {catShort[p.categoryId] ?? p.categoryId}
+                      </span>
+                      <span className="am-prow-fmt">{p.format}</span>
+                    </div>
+                  </div>
+                  <span className="am-prow-chev">
+                    <Icon name="chevron" size={20} />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </>
+    )
   }
 
   return (
@@ -94,25 +186,7 @@ function ProductsList() {
               </span>
             )}
           </div>
-          <div className="adm-filters">
-            <button
-              className="fchip"
-              data-on={filter === 'all' ? 'true' : 'false'}
-              onClick={() => setFilter('all')}
-            >
-              Toutes
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                className="fchip"
-                data-on={filter === c.id ? 'true' : 'false'}
-                onClick={() => setFilter(c.id)}
-              >
-                {c.short}
-              </button>
-            ))}
-          </div>
+          <div className="adm-filters">{filters}</div>
         </div>
 
         <div className="adm-card adm-table-card">
