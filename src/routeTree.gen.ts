@@ -15,7 +15,16 @@ import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as ImgSplatRouteImport } from './routes/img.$'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminAuthedRouteImport } from './routes/admin/_authed'
+import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AdminAuthedProduitsRouteImport } from './routes/admin/_authed/produits'
+import { Route as AdminAuthedParametresRouteImport } from './routes/admin/_authed/parametres'
+import { Route as AdminAuthedCategoriesRouteImport } from './routes/admin/_authed/categories'
+import { Route as AdminAuthedProduitsIndexRouteImport } from './routes/admin/_authed/produits.index'
+import { Route as AdminAuthedProduitsNouveauRouteImport } from './routes/admin/_authed/produits.nouveau'
+import { Route as AdminAuthedProduitsIdRouteImport } from './routes/admin/_authed/produits.$id'
 
 const DevisRoute = DevisRouteImport.update({
   id: '/devis',
@@ -47,10 +56,57 @@ const ImgSplatRoute = ImgSplatRouteImport.update({
   path: '/img/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuthedRoute = AdminAuthedRouteImport.update({
+  id: '/admin/_authed',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuthedIndexRoute = AdminAuthedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuthedProduitsRoute = AdminAuthedProduitsRouteImport.update({
+  id: '/produits',
+  path: '/produits',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedParametresRoute = AdminAuthedParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedCategoriesRoute = AdminAuthedCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedProduitsIndexRoute =
+  AdminAuthedProduitsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminAuthedProduitsRoute,
+  } as any)
+const AdminAuthedProduitsNouveauRoute =
+  AdminAuthedProduitsNouveauRouteImport.update({
+    id: '/nouveau',
+    path: '/nouveau',
+    getParentRoute: () => AdminAuthedProduitsRoute,
+  } as any)
+const AdminAuthedProduitsIdRoute = AdminAuthedProduitsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminAuthedProduitsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -58,18 +114,34 @@ export interface FileRoutesByFullPath {
   '/catalogue': typeof CatalogueRoute
   '/contact': typeof ContactRoute
   '/devis': typeof DevisRoute
+  '/admin': typeof AdminAuthedRouteWithChildren
+  '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/parametres': typeof AdminAuthedParametresRoute
+  '/admin/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/': typeof AdminAuthedIndexRoute
+  '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
+  '/admin/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalogue': typeof CatalogueRoute
   '/contact': typeof ContactRoute
   '/devis': typeof DevisRoute
+  '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/parametres': typeof AdminAuthedParametresRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin': typeof AdminAuthedIndexRoute
+  '/admin/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
+  '/admin/produits': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,9 +149,18 @@ export interface FileRoutesById {
   '/catalogue': typeof CatalogueRoute
   '/contact': typeof ContactRoute
   '/devis': typeof DevisRoute
+  '/admin/_authed': typeof AdminAuthedRouteWithChildren
+  '/admin/login': typeof AdminLoginRoute
   '/img/$': typeof ImgSplatRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/admin/_authed/categories': typeof AdminAuthedCategoriesRoute
+  '/admin/_authed/parametres': typeof AdminAuthedParametresRoute
+  '/admin/_authed/produits': typeof AdminAuthedProduitsRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/_authed/': typeof AdminAuthedIndexRoute
+  '/admin/_authed/produits/$id': typeof AdminAuthedProduitsIdRoute
+  '/admin/_authed/produits/nouveau': typeof AdminAuthedProduitsNouveauRoute
+  '/admin/_authed/produits/': typeof AdminAuthedProduitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,27 +169,52 @@ export interface FileRouteTypes {
     | '/catalogue'
     | '/contact'
     | '/devis'
+    | '/admin'
+    | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/categories'
+    | '/admin/parametres'
+    | '/admin/produits'
     | '/api/auth/$'
+    | '/admin/'
+    | '/admin/produits/$id'
+    | '/admin/produits/nouveau'
+    | '/admin/produits/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/catalogue'
     | '/contact'
     | '/devis'
+    | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/categories'
+    | '/admin/parametres'
     | '/api/auth/$'
+    | '/admin'
+    | '/admin/produits/$id'
+    | '/admin/produits/nouveau'
+    | '/admin/produits'
   id:
     | '__root__'
     | '/'
     | '/catalogue'
     | '/contact'
     | '/devis'
+    | '/admin/_authed'
+    | '/admin/login'
     | '/img/$'
     | '/produit/$slug'
+    | '/admin/_authed/categories'
+    | '/admin/_authed/parametres'
+    | '/admin/_authed/produits'
     | '/api/auth/$'
+    | '/admin/_authed/'
+    | '/admin/_authed/produits/$id'
+    | '/admin/_authed/produits/nouveau'
+    | '/admin/_authed/produits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,6 +222,8 @@ export interface RootRouteChildren {
   CatalogueRoute: typeof CatalogueRoute
   ContactRoute: typeof ContactRoute
   DevisRoute: typeof DevisRoute
+  AdminAuthedRoute: typeof AdminAuthedRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
   ImgSplatRoute: typeof ImgSplatRoute
   ProduitSlugRoute: typeof ProduitSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -165,6 +273,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImgSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/_authed': {
+      id: '/admin/_authed'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAuthedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/_authed/': {
+      id: '/admin/_authed/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAuthedIndexRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -172,14 +301,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_authed/produits': {
+      id: '/admin/_authed/produits'
+      path: '/produits'
+      fullPath: '/admin/produits'
+      preLoaderRoute: typeof AdminAuthedProduitsRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/parametres': {
+      id: '/admin/_authed/parametres'
+      path: '/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AdminAuthedParametresRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/categories': {
+      id: '/admin/_authed/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminAuthedCategoriesRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/produits/': {
+      id: '/admin/_authed/produits/'
+      path: '/'
+      fullPath: '/admin/produits/'
+      preLoaderRoute: typeof AdminAuthedProduitsIndexRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
+    '/admin/_authed/produits/nouveau': {
+      id: '/admin/_authed/produits/nouveau'
+      path: '/nouveau'
+      fullPath: '/admin/produits/nouveau'
+      preLoaderRoute: typeof AdminAuthedProduitsNouveauRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
+    '/admin/_authed/produits/$id': {
+      id: '/admin/_authed/produits/$id'
+      path: '/$id'
+      fullPath: '/admin/produits/$id'
+      preLoaderRoute: typeof AdminAuthedProduitsIdRouteImport
+      parentRoute: typeof AdminAuthedProduitsRoute
+    }
   }
 }
+
+interface AdminAuthedProduitsRouteChildren {
+  AdminAuthedProduitsIdRoute: typeof AdminAuthedProduitsIdRoute
+  AdminAuthedProduitsNouveauRoute: typeof AdminAuthedProduitsNouveauRoute
+  AdminAuthedProduitsIndexRoute: typeof AdminAuthedProduitsIndexRoute
+}
+
+const AdminAuthedProduitsRouteChildren: AdminAuthedProduitsRouteChildren = {
+  AdminAuthedProduitsIdRoute: AdminAuthedProduitsIdRoute,
+  AdminAuthedProduitsNouveauRoute: AdminAuthedProduitsNouveauRoute,
+  AdminAuthedProduitsIndexRoute: AdminAuthedProduitsIndexRoute,
+}
+
+const AdminAuthedProduitsRouteWithChildren =
+  AdminAuthedProduitsRoute._addFileChildren(AdminAuthedProduitsRouteChildren)
+
+interface AdminAuthedRouteChildren {
+  AdminAuthedCategoriesRoute: typeof AdminAuthedCategoriesRoute
+  AdminAuthedParametresRoute: typeof AdminAuthedParametresRoute
+  AdminAuthedProduitsRoute: typeof AdminAuthedProduitsRouteWithChildren
+  AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
+}
+
+const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
+  AdminAuthedCategoriesRoute: AdminAuthedCategoriesRoute,
+  AdminAuthedParametresRoute: AdminAuthedParametresRoute,
+  AdminAuthedProduitsRoute: AdminAuthedProduitsRouteWithChildren,
+  AdminAuthedIndexRoute: AdminAuthedIndexRoute,
+}
+
+const AdminAuthedRouteWithChildren = AdminAuthedRoute._addFileChildren(
+  AdminAuthedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogueRoute: CatalogueRoute,
   ContactRoute: ContactRoute,
   DevisRoute: DevisRoute,
+  AdminAuthedRoute: AdminAuthedRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
   ImgSplatRoute: ImgSplatRoute,
   ProduitSlugRoute: ProduitSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

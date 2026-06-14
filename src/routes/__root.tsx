@@ -3,6 +3,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useRouterState,
 } from '@tanstack/react-router'
 import appCss from '#/styles.css?url'
 import { DevisProvider } from '#/lib/devis-store'
@@ -37,6 +38,13 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const { settings } = Route.useLoaderData()
+  const isAdmin = useRouterState({
+    select: (s) => {
+      const pathname = s.location.pathname
+      return pathname === '/admin' || pathname.startsWith('/admin/')
+    },
+  })
+  if (isAdmin) return <Outlet />
   return (
     <DevisProvider>
       <AppShell settings={settings}>

@@ -20,6 +20,10 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    // Aucune auto-inscription publique : le back-office n'a qu'un seul compte
+    // admin, créé hors-ligne (voir scripts/create-admin.ts). Sans ce verrou,
+    // n'importe qui pourrait s'inscrire et franchir le garde requireAdmin.
+    disableSignUp: true,
   },
   plugins: [tanstackStartCookies()],
 })

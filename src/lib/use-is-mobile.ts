@@ -1,0 +1,17 @@
+import { useEffect, useState } from 'react'
+
+/**
+ * Renvoie true quand l'écran est étroit (mobile). SSR-safe : false au rendu
+ * serveur et au premier rendu client, puis bascule après montage.
+ */
+export function useIsMobile(maxWidth = 720): boolean {
+  const [mobile, setMobile] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${maxWidth}px)`)
+    const update = () => setMobile(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [maxWidth])
+  return mobile
+}

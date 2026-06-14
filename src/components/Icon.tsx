@@ -15,6 +15,19 @@ import {
   Minus,
   Mail,
   Clock,
+  Box,
+  Settings,
+  SquarePen,
+  Trash2,
+  Save,
+  Lock,
+  ExternalLink,
+  LogOut,
+  ChevronRight,
+  Image as ImageIcon,
+  Sparkles,
+  Tag,
+  Eye,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -35,6 +48,20 @@ const MAP: Record<string, LucideIcon> = {
   layers: Layers,
   x: X,
   minus: Minus,
+  // back-office
+  box: Box,
+  gear: Settings,
+  edit: SquarePen,
+  trash: Trash2,
+  save: Save,
+  lock: Lock,
+  external: ExternalLink,
+  logout: LogOut,
+  chevron: ChevronRight,
+  image: ImageIcon,
+  spark: Sparkles,
+  tag: Tag,
+  eye: Eye,
 }
 
 /** Logo officiel WhatsApp (glyphe rempli). lucide n'inclut pas les logos de marque. */
